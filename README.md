@@ -1,7 +1,11 @@
 # AOG static site — deployment notes
 
-**Deploy the `deploy/` folder as the web root.** It is drop-in ready: upload its
-contents so `deploy/index.html` answers `https://associateownersgroup.com/`.
+**Deploy the `public/` folder as the web root.** It is drop-in ready: set the
+host's publish directory to `public` so `public/index.html` answers
+`https://associateownersgroup.com/`. There is no build step.
+
+This file deliberately lives *outside* `public/`, so deployment notes are never
+served from the live site.
 
 This is a **stopgap**. It is a frozen snapshot of the WordPress site — no admin,
 no database, no way to edit content except by hand-editing HTML.
@@ -10,12 +14,16 @@ no database, no way to edit content except by hand-editing HTML.
 
 ## Folders here
 
-| Folder | What it is |
+| Path | What it is |
 |---|---|
-| `deploy/` | **The deployable site.** This is what gets hosted. |
-| `associateownersgroup.com/` | Original crawler mirror. Kept for reference — do not deploy. |
-| `cdn.jsdelivr.net/`, `www.youtube.com/`, `www.googletagmanager.com/`, `challenges.cloudflare.com/` | Captured third-party files. No longer needed; `deploy/` loads these from their real origins. |
-| `Untitled.log` | Crawler log. Not part of the site. |
+| `public/` | **The deployable site.** Point the host's publish directory here. |
+| `README.md` | This file. Outside the web root, so it is never served. |
+
+## Host setup, in short
+
+Netlify / Vercel / Cloudflare Pages: connect the repo, leave the build command
+empty, set the **publish directory to `public`**, and set the 404 page to
+`/404.html` if asked.
 
 ## What was fixed to make it hostable
 
@@ -73,13 +81,13 @@ Verified by crawling all 25 pages: **85 unique local URLs, all returning 200.**
 
 Any static host works — Netlify, Vercel, Cloudflare Pages, S3+CloudFront, plain nginx.
 
-1. Point the web root at `deploy/`.
+1. Point the web root at `public/`.
 2. Set the 404 document to `/404.html`.
 3. Confirm directory requests serve `index.html`.
 4. Enable HTTPS for both apex and `www`, and redirect `www` → apex (or the reverse —
    just pick one and redirect the other, so URLs don't split).
 
-To preview locally, from inside `deploy/`:
+To preview locally, from inside `public/`:
 
     python3 -m http.server 8788
 

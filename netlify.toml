@@ -1,0 +1,6 @@
+# Static site — no build step. The site lives in public/ so that files at the
+# repo root (README.md, this file) are never served.
+[build]
+  publish = "public"
+
+# Netlify serves public/404.html for unmatched paths automatically.
