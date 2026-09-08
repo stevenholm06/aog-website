@@ -1,0 +1,45 @@
+/* Hero video background — explore branch.
+   Plays the "Watch Our Story" video (YouTube sQ64VFL9ZKY) muted + looping
+   behind the hero. The original JPG stays as the section background so it
+   shows before the video loads, on mobile, and if autoplay is blocked. */
+
+#brxe-mmxagp .hero-video-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  /* Hidden until the player reports it is actually playing, so a slow or
+     blocked YouTube load leaves the JPG showing instead of a black box. */
+  opacity: 0;
+  transition: opacity 900ms ease-in;
+}
+
+#brxe-mmxagp .hero-video-bg.is-playing { opacity: 1; }
+
+/* Cover-fit a 16:9 iframe: size off whichever axis is larger. */
+#brxe-mmxagp .hero-video-bg iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 56.25vw;        /* 100vw * 9/16 */
+  min-height: 100%;
+  min-width: 177.78vh;    /* 100vh * 16/9 */
+  border: 0;
+  pointer-events: none;
+}
+
+/* Keep the existing dark gradient above the video, and the copy above that. */
+#brxe-mmxagp::before { z-index: 1; }
+#brxe-mmxagp > .brxe-container { position: relative; z-index: 2; }
+
+/* Mobile autoplay is unreliable and the data cost is real — fall back to the JPG. */
+@media (max-width: 767px) {
+  #brxe-mmxagp .hero-video-bg { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #brxe-mmxagp .hero-video-bg { display: none; }
+}
