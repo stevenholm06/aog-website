@@ -38,7 +38,7 @@
   --gutter: clamp(20px, 4vw, 56px);
   --maxw:   1320px;
   --band:   clamp(72px, 7vw, 116px);
-  --hdr:    72px;
+  --hdr:    96px;
 }
 
 *,*::before,*::after { box-sizing: border-box; }
@@ -114,9 +114,14 @@ p:last-child { margin-bottom: 0; }
 .hdr.stuck { background: rgba(43,52,57,.95); backdrop-filter: blur(8px); border-bottom-color: var(--rule-dark); }
 .hdr .wrap { display: flex; align-items: center; gap: 26px; }
 .hdr__logo { flex: none; }
-.hdr__logo img { width: 152px; height: 36px; object-fit: contain; object-position: left center; }
-.nav { margin-left: auto; display: flex; align-items: center; gap: 26px; }
-.nav a { font: 500 13px/1 var(--body); color: rgba(255,255,255,.8); }
+.hdr__logo img { width: 190px; height: 45px; object-fit: contain; object-position: left center; }
+.nav { margin-left: auto; display: flex; align-items: center; gap: 30px; }
+.nav a { font: 500 14.5px/1 var(--body); color: rgba(255,255,255,.85); }
+/* .nav a is more specific than .btn--y, so without this the header CTA
+   inherits the nav's white text and lands at 1.8:1 on the gold. */
+.nav a.btn { font: 600 13.5px/1 var(--body); letter-spacing: .04em; padding: 15px 24px; }
+.nav a.btn--y { color: var(--gun); }
+.nav a.btn--y:hover { color: var(--gun); }
 .nav a:hover { color: var(--gold); }
 .burger { display: none; margin-left: auto; width: 40px; height: 40px; padding: 9px; background: none; border: 0; cursor: pointer; }
 .burger i { display: block; height: 2px; background: #fff; margin: 5px 0; transition: transform .22s, opacity .22s; }
@@ -168,9 +173,10 @@ p:last-child { margin-bottom: 0; }
 
 /* --- The model diagram: the page's one real idea -------------------------- */
 .model { border: 1.5px solid var(--gun); background: var(--white); }
-.model__row { display: grid; grid-template-columns: repeat(3,1fr); }
+.model__row { display: grid; grid-template-columns: repeat(4,1fr); }
 .model__in { padding: 26px 24px; border-right: 1.5px solid var(--gun); border-bottom: 1.5px solid var(--gun); }
 .model__in:last-child { border-right: 0; }
+.model__k { min-height: 1em; }
 .model__in h3 { margin-bottom: 7px; }
 .model__in p { font-size: 14px; color: var(--slate); }
 .model__k { display: block; margin-bottom: 14px; font: 500 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--grey-3); }
@@ -271,7 +277,8 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 820px) {
   .head, .split, .feature, .closer { grid-template-columns: 1fr; }
   .pillars { grid-template-columns: 1fr; }
-  .model__row { grid-template-columns: 1fr; }
+  .model__row { grid-template-columns: 1fr 1fr; }
+  .model__in:nth-child(2n) { border-right: 0; }
   .model__in { border-right: 0; }
   .feature__i { order: -1; }
   .ftr__g { grid-template-columns: 1fr 1fr; }
