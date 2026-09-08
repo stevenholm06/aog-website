@@ -12,22 +12,27 @@
    =========================================================================== */
 
 :root {
-  --black:  #111315;
-  --black-2:#181B1E;
-  --black-3:#22262A;
+  /* --- AOG brand ------------------------------------------------------- */
+  --gun:     #2B3439;   /* Gunmetal — the brand dark */
+  --gun-d:   #212A2E;   /* one step down, for layering */
+  --gun-l:   #3A464C;   /* one step up, for hover/edges */
+  --gold:    #F0B743;   /* Gold — the single accent */
+  --gold-d:  #D89F2E;
+
   --white:  #FFFFFF;
-  --grey-1: #F2F3F5;
-  --grey-2: #E2E4E8;
-  --grey-3: #9AA0A8;
-  --slate:  #4A525B;
-  --yellow: #EFD031;   /* AOG brand yellow — the single accent */
-  --yellow-d:#D9BA1C;
+  --grey-1: #F3F4F5;
+  --grey-2: #E3E5E7;
+  --grey-3: #8D959B;
+  --slate:  #4A545B;
 
-  --rule:      #DCDEE2;
-  --rule-dark: rgba(255,255,255,.12);
+  --rule:      #DDE0E2;
+  --rule-dark: rgba(255,255,255,.13);
 
-  --display: "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --body:    "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  /* Proxima Nova is the brand face. It is a licensed Adobe Fonts family, so
+     it is listed first and takes over automatically once the kit is loaded;
+     Figtree is the closest free stand-in until then. */
+  --display: "Proxima Nova", "Figtree", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --body:    "Proxima Nova", "Figtree", "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
   --gutter: clamp(20px, 4vw, 56px);
@@ -58,7 +63,7 @@ h1,h2,h3 {
   font-weight: 600;
   letter-spacing: -.03em;
   line-height: .95;
-  color: var(--black);
+  color: var(--gun);
   text-wrap: balance;
 }
 h1 { font-size: clamp(42px, 6.4vw, 104px); font-weight: 700; letter-spacing: -.04em; }
@@ -69,7 +74,7 @@ p:last-child { margin-bottom: 0; }
 
 .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
 .band { padding: var(--band) 0; }
-.dark { background: var(--black); color: rgba(255,255,255,.66); }
+.dark { background: var(--gun); color: rgba(255,255,255,.66); }
 .dark h1,.dark h2,.dark h3 { color: var(--white); }
 .tint { background: var(--grey-1); }
 
@@ -78,11 +83,11 @@ p:last-child { margin-bottom: 0; }
   display: inline-flex; align-items: center; gap: 10px;
   margin: 0 0 18px;
   font: 500 11px/1 var(--mono);
-  letter-spacing: .16em; text-transform: uppercase; color: var(--black);
+  letter-spacing: .16em; text-transform: uppercase; color: var(--gun);
 }
-.dark .tag, .hero .tag { color: var(--yellow); }
-.tag b { font-weight: 500; padding: 5px 7px; background: var(--yellow); color: var(--black); }
-.dark .tag b { background: var(--yellow); color: var(--black); }
+.dark .tag, .hero .tag { color: var(--gold); }
+.tag b { font-weight: 500; padding: 5px 7px; background: var(--gold); color: var(--gun); }
+.dark .tag b { background: var(--gold); color: var(--gun); }
 
 /* --- Buttons -------------------------------------------------------------- */
 .btn {
@@ -94,25 +99,25 @@ p:last-child { margin-bottom: 0; }
   transition: background-color .18s, color .18s, border-color .18s, transform .18s;
 }
 .btn:active { transform: translateY(1px); }
-.btn--y { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
-.btn--y:hover { background: var(--yellow-d); border-color: var(--yellow-d); }
-.btn--line { color: var(--black); border-color: var(--black); }
-.btn--line:hover { background: var(--black); color: var(--white); }
+.btn--y { background: var(--gold); color: var(--gun); border-color: var(--gold); }
+.btn--y:hover { background: var(--gold-d); border-color: var(--gold-d); }
+.btn--line { color: var(--gun); border-color: var(--gun); }
+.btn--line:hover { background: var(--gun); color: var(--white); }
 .btn--linew { color: var(--white); border-color: rgba(255,255,255,.4); }
-.btn--linew:hover { background: var(--white); color: var(--black); border-color: var(--white); }
+.btn--linew:hover { background: var(--white); color: var(--gun); border-color: var(--white); }
 .btn i { font-style: normal; transition: transform .18s; }
 .btn:hover i { transform: translateX(3px); }
 
 /* --- Header --------------------------------------------------------------- */
 .hdr { position: fixed; inset: 0 0 auto; z-index: 90; height: var(--hdr); display: flex; align-items: center;
        transition: background-color .25s, border-color .25s; border-bottom: 1px solid transparent; }
-.hdr.stuck { background: rgba(17,19,21,.95); backdrop-filter: blur(8px); border-bottom-color: var(--rule-dark); }
+.hdr.stuck { background: rgba(43,52,57,.95); backdrop-filter: blur(8px); border-bottom-color: var(--rule-dark); }
 .hdr .wrap { display: flex; align-items: center; gap: 26px; }
 .hdr__logo { flex: none; }
 .hdr__logo img { width: 152px; height: 36px; object-fit: contain; object-position: left center; }
 .nav { margin-left: auto; display: flex; align-items: center; gap: 26px; }
 .nav a { font: 500 13px/1 var(--body); color: rgba(255,255,255,.8); }
-.nav a:hover { color: var(--yellow); }
+.nav a:hover { color: var(--gold); }
 .burger { display: none; margin-left: auto; width: 40px; height: 40px; padding: 9px; background: none; border: 0; cursor: pointer; }
 .burger i { display: block; height: 2px; background: #fff; margin: 5px 0; transition: transform .22s, opacity .22s; }
 .burger[aria-expanded="true"] i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -121,7 +126,7 @@ p:last-child { margin-bottom: 0; }
 
 /* --- Hero: typographic, no stock photography ------------------------------ */
 .hero {
-  position: relative; background: var(--black); color: #fff;
+  position: relative; background: var(--gun); color: #fff;
   padding: calc(var(--hdr) + clamp(60px,9vw,120px)) 0 0; overflow: hidden;
 }
 /* Structural grid, drawn not decorated. */
@@ -144,7 +149,7 @@ p:last-child { margin-bottom: 0; }
    colour has to be stated here — inheriting the global dark h1 puts black
    type on a black background. */
 .hero h1 { max-width: 16ch; color: var(--white); }
-.hero h1 span { color: var(--yellow); }
+.hero h1 span { color: var(--gold); }
 .hero__lede {
   max-width: 46ch; margin: 26px 0 34px;
   font-size: clamp(16px,1.35vw,19px); color: rgba(255,255,255,.72);
@@ -166,30 +171,30 @@ p:last-child { margin-bottom: 0; }
 .head--solo { grid-template-columns: 1fr; max-width: 58ch; }
 
 /* --- The model diagram: the page's one real idea -------------------------- */
-.model { border: 1.5px solid var(--black); background: var(--white); }
+.model { border: 1.5px solid var(--gun); background: var(--white); }
 .model__row { display: grid; grid-template-columns: repeat(3,1fr); }
-.model__in { padding: 26px 24px; border-right: 1.5px solid var(--black); border-bottom: 1.5px solid var(--black); }
+.model__in { padding: 26px 24px; border-right: 1.5px solid var(--gun); border-bottom: 1.5px solid var(--gun); }
 .model__in:last-child { border-right: 0; }
 .model__in h3 { margin-bottom: 7px; }
 .model__in p { font-size: 14px; color: var(--slate); }
 .model__k { display: block; margin-bottom: 14px; font: 500 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--grey-3); }
 .model__core {
-  background: var(--yellow); color: var(--black);
-  padding: 30px 24px; text-align: center; border-bottom: 1.5px solid var(--black);
+  background: var(--gold); color: var(--gun);
+  padding: 30px 24px; text-align: center; border-bottom: 1.5px solid var(--gun);
 }
 .model__core strong { display: block; font: 700 clamp(20px,2.2vw,30px)/1.05 var(--display); letter-spacing: -.03em; }
 .model__core span { display: block; margin-top: 9px; font: 500 11px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
-.model__out { background: var(--black); color: #fff; padding: 28px 24px; text-align: center; }
+.model__out { background: var(--gun); color: #fff; padding: 28px 24px; text-align: center; }
 .model__out strong { display: block; font: 700 clamp(19px,2vw,27px)/1.1 var(--display); letter-spacing: -.03em; color: #fff; }
-.model__out span { display: block; margin-top: 8px; font: 500 11px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--yellow); }
-.model__flow { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px 0; font: 500 10.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--grey-3); border-bottom: 1.5px solid var(--black); }
+.model__out span { display: block; margin-top: 8px; font: 500 11px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.model__flow { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px 0; font: 500 10.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--grey-3); border-bottom: 1.5px solid var(--gun); }
 .model__flow::before,.model__flow::after { content:""; height:1px; width: clamp(24px,6vw,90px); background: var(--grey-2); }
 
 /* --- Pillars -------------------------------------------------------------- */
 .pillars { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5px; background: var(--rule-dark); border: 1.5px solid var(--rule-dark); }
-.pillar { background: var(--black); padding: 34px 30px 36px; position: relative; transition: background-color .25s; }
-.pillar:hover { background: var(--black-2); }
-.pillar__n { font: 500 11px/1 var(--mono); letter-spacing: .16em; color: var(--yellow); }
+.pillar { background: var(--gun); padding: 34px 30px 36px; position: relative; transition: background-color .25s; }
+.pillar:hover { background: var(--gun-d); }
+.pillar__n { font: 500 11px/1 var(--mono); letter-spacing: .16em; color: var(--gold); }
 .pillar h3 { margin: 16px 0 10px; }
 .pillar p { font-size: 15px; }
 
@@ -197,8 +202,8 @@ p:last-child { margin-bottom: 0; }
 .rules li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: baseline;
             padding: 16px 0; border-bottom: 1px solid var(--rule); font-size: 16px; }
 .dark .rules li { border-color: var(--rule-dark); }
-.rules li span { font: 500 11px/1 var(--mono); color: var(--black); letter-spacing: .1em; }
-.dark .rules li span { color: var(--yellow); }
+.rules li span { font: 500 11px/1 var(--mono); color: var(--gun); letter-spacing: .1em; }
+.dark .rules li span { color: var(--gold); }
 
 /* --- Media split ---------------------------------------------------------- */
 .split { display: grid; grid-template-columns: 1.12fr .88fr; gap: 48px; align-items: center; }
@@ -209,7 +214,7 @@ p:last-child { margin-bottom: 0; }
 .team { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
 .who { background: var(--white); }
 .who img { width: 100%; aspect-ratio: 4/5; object-fit: cover; }
-.who__b { padding: 18px 20px 22px; border-top: 3px solid var(--yellow); }
+.who__b { padding: 18px 20px 22px; border-top: 3px solid var(--gold); }
 .who__b h3 { font-size: 18px; }
 .who__b span { display: block; margin-top: 5px; font: 500 10.5px/1.3 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--grey-3); }
 
@@ -220,9 +225,9 @@ p:last-child { margin-bottom: 0; }
 
 /* --- Feature -------------------------------------------------------------- */
 .feature { display: grid; grid-template-columns: .8fr 1.2fr; gap: 46px; align-items: center; }
-.feature__i { background: var(--black-3); border: 1.5px solid var(--rule-dark); }
+.feature__i { background: var(--gun-l); border: 1.5px solid var(--rule-dark); }
 .feature__i img { width: 100%; max-height: 520px; object-fit: contain; margin: 0 auto; }
-.feature__when { margin: 18px 0; font: 500 11.5px/1.5 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--yellow); }
+.feature__when { margin: 18px 0; font: 500 11.5px/1.5 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
 
 /* --- News ----------------------------------------------------------------- */
 .news { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
@@ -233,20 +238,20 @@ p:last-child { margin-bottom: 0; }
 .post h3 { margin: 12px 0 9px; }
 .post--big h3 { font-size: clamp(21px,2vw,30px); }
 .post p { font-size: 14.5px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
-.post__go { margin-top: auto; padding-top: 16px; font: 600 11.5px/1 var(--body); color: var(--black); }
+.post__go { margin-top: auto; padding-top: 16px; font: 600 11.5px/1 var(--body); color: var(--gun); }
 
 /* --- Closer --------------------------------------------------------------- */
 .closer { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
-.closer h2 span { color: var(--yellow); }
+.closer h2 span { color: var(--gold); }
 .closer p { max-width: 42ch; margin-top: 14px; }
 .closer__c { display: flex; gap: 12px; flex-wrap: wrap; }
 
 /* --- Footer --------------------------------------------------------------- */
-.ftr { background: var(--black-2); color: rgba(255,255,255,.6); padding: 60px 0 0; }
+.ftr { background: var(--gun-d); color: rgba(255,255,255,.6); padding: 60px 0 0; }
 .ftr__g { display: grid; grid-template-columns: 1.7fr 1fr 1fr 1.3fr; gap: 34px; padding-bottom: 44px; }
 .ftr h4 { margin: 0 0 15px; font: 500 10.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.4); }
 .ftr li { margin-bottom: 9px; font-size: 14.5px; }
-.ftr a:hover { color: var(--yellow); }
+.ftr a:hover { color: var(--gold); }
 .ftr__logo img { width: 178px; height: 42px; object-fit: contain; object-position: left center; }
 .ftr__note { margin-top: 15px; max-width: 30ch; font-size: 14.5px; }
 .ftr__bar { border-top: 1px solid var(--rule-dark); padding: 18px 0; font: 400 12.5px/1.5 var(--mono); display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
@@ -260,7 +265,7 @@ p:last-child { margin-bottom: 0; }
   .nav { display: none; }
   .burger { display: block; }
   .nav.open { display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
-              position: fixed; inset: var(--hdr) 0 auto; background: var(--black);
+              position: fixed; inset: var(--hdr) 0 auto; background: var(--gun);
               padding: 24px var(--gutter) 30px; border-bottom: 1px solid var(--rule-dark); }
   .team { grid-template-columns: repeat(2,1fr); }
   .logos { grid-template-columns: repeat(3,1fr); }
