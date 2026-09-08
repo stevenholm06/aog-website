@@ -1,0 +1,263 @@
+/* ===========================================================================
+   AOG "Ascend" skin — explore branch.
+
+   Restyles the existing Bricks/WordPress markup to match the design language
+   of owner-ascend-group.base44.app. Content and structure are untouched; this
+   file only re-points the design tokens the theme already uses, so it applies
+   across all 24 pages without editing their markup.
+
+   Tokens below were measured from the reference site, not guessed.
+   =========================================================================== */
+
+:root {
+  /* --- Reference palette ------------------------------------------------ */
+  --aog-ink:      #0F1115;   /* dark section ground */
+  --aog-ink-text: #121417;   /* headings on light */
+  --aog-paper:    #F4F4F2;   /* light section ground */
+  --aog-gold:     #C5A059;   /* single accent */
+  --aog-slate:    #3E444D;   /* body copy, secondary panels */
+  --aog-panel:    #E8E8E5;   /* light card fill */
+  --aog-rule:     #D9D7D4;   /* hairlines */
+
+  --aog-display: "Fraunces", ui-serif, Georgia, serif;
+  --aog-body:    "Montserrat", ui-sans-serif, system-ui, sans-serif;
+
+  /* --- Re-point the framework's own tokens ------------------------------ */
+  --primary:        var(--aog-gold);
+  --secondary:      var(--aog-ink);
+  --bg-body:        var(--aog-paper);
+  --bg-surface:     #FFFFFF;
+  --text-body:      var(--aog-slate);
+  --text-title:     var(--aog-ink-text);
+  --border-primary: var(--aog-rule);
+
+  /* The reference is square throughout — no rounding anywhere. */
+  --radius-s: 0; --radius-m: 0; --radius-l: 0; --radius-xl: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Typography
+   Fraunces for display at 400 with tight tracking; Montserrat for everything
+   else. The theme hardcodes "Switzer" on body and headings, so both need an
+   explicit override rather than a token swap.
+   --------------------------------------------------------------------------- */
+
+body {
+  font-family: var(--aog-body);
+  font-weight: 400;
+  color: var(--text-body);
+  background-color: var(--aog-paper);
+}
+
+h1, h2, h3, h4, h5, h6,
+.brxe-heading {
+  font-family: var(--aog-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  color: var(--text-title);
+}
+
+h1, .brxe-heading h1 { letter-spacing: -0.022em; }
+
+/* Reference sets body copy a touch looser than the theme default. */
+.brxe-text-basic, .brxe-text, p { line-height: 1.65; }
+
+/* ---------------------------------------------------------------------------
+   Buttons — square, uppercase, widely tracked.
+   Primary is a gold fill; the secondary ("tertiary" in Bricks) is a hairline
+   ghost that inverts on hover.
+   --------------------------------------------------------------------------- */
+
+.bricks-button, .brxe-button, .btn {
+  font-family: var(--aog-body);
+  font-weight: 500;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  border-radius: 0;
+  padding: 1.7rem 3rem;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+
+.bricks-background-primary,
+.brxe-button.bricks-background-primary {
+  background-color: var(--aog-gold);
+  color: var(--aog-ink) !important;
+  border: 1px solid var(--aog-gold);
+}
+
+.bricks-background-primary:hover,
+.brxe-button.bricks-background-primary:hover {
+  background-color: transparent;
+  color: var(--aog-gold) !important;
+}
+
+/* Ghost variant — the hero's secondary CTA and the footer's "Get in touch".
+   The theme puts .tertiary AND .bricks-background-primary on the same element,
+   so this needs to outrank the gold fill's black text rather than tie with it. */
+.brxe-button.btn.tertiary,
+.brxe-button.btn.tertiary.bricks-background-primary {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  /* core_framework.css sets `.btn { color: #000 !important }`, which even beats
+     its own .tertiary rule — this button is black-on-dark without this. */
+  color: #FFFFFF !important;
+}
+
+.brxe-button.btn.tertiary:hover,
+.brxe-button.btn.tertiary.bricks-background-primary:hover {
+  background-color: #FFFFFF;
+  border-color: #FFFFFF;
+  color: var(--aog-ink);
+}
+
+/* ---------------------------------------------------------------------------
+   Squaring off
+   The theme rounds cards, images and media. The reference rounds nothing.
+   --------------------------------------------------------------------------- */
+
+.brxe-block, .brxe-div, .brxe-image, .brxe-icon-box,
+.shadow-s, .shadow-m, .shadow-l,
+img, iframe, video {
+  border-radius: 0;
+}
+
+/* Reference uses flat fills and hairlines instead of drop shadows. */
+.shadow-s, .shadow-m, .shadow-l { box-shadow: none; }
+
+/* ---------------------------------------------------------------------------
+   Section rhythm
+   Reference runs 144px of vertical padding and alternates ink / paper bands.
+   --------------------------------------------------------------------------- */
+
+/* Content sections only — the header and footer wrap their own .brxe-section
+   and must keep the theme's compact padding. */
+#brx-content .brxe-section {
+  padding-top: 14.4rem;
+  padding-bottom: 14.4rem;
+}
+
+.brxe-container { max-width: 120rem; width: 100%; }
+
+/* ---------------------------------------------------------------------------
+   Display type scale
+   The reference runs a much larger, tighter display scale than the theme's
+   default. h1 ~57-92px, h2 ~60px, both at weight 400 with negative tracking.
+   --------------------------------------------------------------------------- */
+
+#brx-content h1, #brx-content .brxe-heading h1 {
+  font-size: clamp(4.2rem, 5.2vw, 7.6rem);
+  line-height: 0.98;
+}
+
+#brx-content h2, #brx-content .brxe-heading h2 {
+  font-size: clamp(3.4rem, 4.2vw, 6rem);
+  line-height: 1.0;
+}
+
+#brx-content h3, #brx-content .brxe-heading h3 {
+  font-size: clamp(2rem, 1.6vw, 2.6rem);
+  line-height: 1.15;
+}
+
+/* ---------------------------------------------------------------------------
+   Alignment
+   The reference is left-aligned throughout — headings, intros and the rules
+   above them all hang off the same left edge. The theme centres section
+   intros, which is the single biggest structural difference between the two.
+   --------------------------------------------------------------------------- */
+
+#brx-content .brxe-section,
+#brx-content .brxe-section > .brxe-container,
+#brx-content .brxe-heading,
+#brx-content .brxe-text-basic {
+  text-align: left;
+}
+
+/* Section intro copy sits in a measured column rather than full width. */
+#brx-content .brxe-section > .brxe-container > .brxe-div > .brxe-text-basic {
+  max-width: 62ch;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Alternating ink / paper bands
+   Reference alternates a near-black section with a warm off-white one. The
+   hero is already dark, so the banding starts from the second section.
+   --------------------------------------------------------------------------- */
+
+#brx-content > .brxe-section:nth-of-type(odd):not(:first-of-type) {
+  background-color: var(--aog-ink);
+}
+
+#brx-content > .brxe-section:nth-of-type(odd):not(:first-of-type) :is(h1,h2,h3,h4,h5,h6,.brxe-heading) {
+  color: #FFFFFF;
+}
+
+#brx-content > .brxe-section:nth-of-type(odd):not(:first-of-type) :is(.brxe-text-basic, p, li) {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---------------------------------------------------------------------------
+   Cards — flat fills and hairlines, never white boxes with shadows.
+   --------------------------------------------------------------------------- */
+
+#brx-content .brxe-block.shadow-s,
+#brx-content .brxe-div.shadow-s {
+  background-color: var(--aog-panel);
+  border: 1px solid var(--aog-rule);
+}
+
+#brx-content > .brxe-section:nth-of-type(odd):not(:first-of-type) :is(.shadow-s, .brxe-block) {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ---------------------------------------------------------------------------
+   Partner logo tiles
+   The partner logos are full-colour artwork drawn for white backgrounds (one
+   is literally named "…_onwhite.png"), so they vanish on the ink band. Keep
+   their tiles light regardless of the section they sit in — which also matches
+   the reference's flat light card treatment.
+   --------------------------------------------------------------------------- */
+
+/* The slide itself is the card — not a nested box inside it — so the light
+   fill has to beat the dark-section .brxe-block rule above. */
+#brx-content .splide__slide,
+#brx-content > .brxe-section:nth-of-type(odd):not(:first-of-type) .splide__slide.brxe-block,
+#brx-content > .brxe-section:nth-of-type(odd):not(:first-of-type) .splide__slide {
+  background-color: #FFFFFF;
+  border: 1px solid var(--aog-rule);
+}
+
+#brx-content .splide__slide > .brxe-div {
+  background-color: transparent;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2.4rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Secondary buttons on ink bands
+   The theme's non-primary button is dark-on-light; dropped onto a dark section
+   it becomes dark-on-dark. Invert it there.
+   --------------------------------------------------------------------------- */
+
+#brx-content > .brxe-section:nth-of-type(odd):not(:first-of-type)
+  .brxe-button:not(.bricks-background-primary) {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #FFFFFF !important;
+}
+
+#brx-content > .brxe-section:nth-of-type(odd):not(:first-of-type)
+  .brxe-button:not(.bricks-background-primary):hover {
+  background-color: #FFFFFF;
+  border-color: #FFFFFF;
+  color: var(--aog-ink);
+}
