@@ -23,7 +23,7 @@
 
   /* Tighter than the old site: the complaint was dead space, so the rhythm is
      deliberately compact and the density comes from multi-column content. */
-  --band:   clamp(72px, 8vw, 112px);
+  --band:   clamp(52px, 5.2vw, 84px);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -115,7 +115,10 @@ p:last-child { margin-bottom: 0; }
   padding: 22px 0;
 }
 .site-header .wrap { display: flex; align-items: center; gap: 32px; }
-.site-header__logo img { height: 40px; width: auto; }
+/* flex: none — as a flex item the logo link otherwise shrinks to zero width
+   and the SVG disappears entirely. */
+.site-header__logo { flex: none; display: block; }
+.site-header__logo img { height: 40px; width: 170px; object-fit: contain; object-position: left center; }
 .nav { margin-left: auto; display: flex; align-items: center; gap: 34px; }
 .nav a {
   font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
@@ -130,12 +133,12 @@ p:last-child { margin-bottom: 0; }
 /* --- Hero ----------------------------------------------------------------- */
 .hero {
   position: relative;
-  min-height: 92vh;
+  min-height: min(660px, 78vh);
   display: flex;
   align-items: center;
   background: var(--ink) center/cover no-repeat;
   overflow: hidden;
-  padding: 140px 0 90px;
+  padding: 118px 0 76px;
 }
 .hero__media { position: absolute; inset: 0; z-index: 0; opacity: 0; transition: opacity .9s ease-in; }
 .hero__media.is-playing { opacity: 1; }
@@ -172,7 +175,7 @@ p:last-child { margin-bottom: 0; }
 @keyframes cue { 0%,100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 
 /* --- Section head: headline left, supporting copy right ------------------- */
-.sechead { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 40px 64px; align-items: end; margin-bottom: 56px; }
+.sechead { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 28px 56px; align-items: end; margin-bottom: 38px; }
 .sechead__copy { font-size: 16px; }
 .sechead--solo { grid-template-columns: 1fr; max-width: 62ch; }
 
@@ -228,14 +231,16 @@ p:last-child { margin-bottom: 0; }
 .site-footer__bar { border-top: 1px solid var(--rule-dark); padding: 22px 0; display: flex; justify-content: space-between; gap: 20px; font-size: 12px; }
 
 /* --- Responsive ----------------------------------------------------------- */
-@media (max-width: 1000px) {
+@media (max-width: 820px) {
   .sechead, .split, .closer { grid-template-columns: 1fr; }
   .cards { grid-template-columns: 1fr 1fr; }
   .logos { grid-template-columns: repeat(3, 1fr); }
   .site-footer__grid { grid-template-columns: 1fr 1fr; }
 }
 
-@media (max-width: 720px) {
+/* The full nav needs ~695px on its own; with the logo and gutters it stops
+   fitting well before the layout breakpoints, so it collapses on its own. */
+@media (max-width: 1040px) {
   .nav { display: none; }
   .nav-toggle { display: block; }
   .nav.is-open {
@@ -243,6 +248,10 @@ p:last-child { margin-bottom: 0; }
     position: absolute; top: 100%; left: 0; right: 0;
     background: var(--ink); padding: 24px var(--gutter) 30px;
   }
+  .nav.is-open .nav__cta { margin-left: 0; }
+}
+
+@media (max-width: 720px) {
   .cards, .news { grid-template-columns: 1fr; }
   .logos { grid-template-columns: repeat(2, 1fr); }
   .hero { min-height: 88vh; }
