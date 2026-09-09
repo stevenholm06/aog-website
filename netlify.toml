@@ -4,3 +4,12 @@
   publish = "public"
 
 # Netlify serves public/404.html for unmatched paths automatically.
+
+# The April 2026 Annual Meeting has passed and its page is gone, but the URL
+# was live and may be indexed or linked from elsewhere. Send it to /events/
+# rather than serving a 404.
+[[redirects]]
+  from = "/annual-meeting/*"
+  to = "/events/"
+  status = 301
+  force = true

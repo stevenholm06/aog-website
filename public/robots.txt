@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+# The author archive was noindex on the previous site.
+Disallow: /author/
+
 Sitemap: https://associateownersgroup.com/sitemap.xml

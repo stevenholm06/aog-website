@@ -1,0 +1,11 @@
+{
+  "name": "Associate Owners Group",
+  "short_name": "AOG",
+  "icons": [
+    { "src": "/assets/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#2B3439",
+  "background_color": "#2B3439",
+  "display": "browser"
+}
