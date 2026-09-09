@@ -31,6 +31,20 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'public')
 # version token a deploy can leave visitors on the previous design.
 ASSET_V = time.strftime('%Y%m%d%H%M')
 
+ANALYTICS = """<!-- Google tag (gtag.js) — restored from the original WordPress head.
+     The Site Kit plumbing that surrounded it there (developer_id, the
+     _googlesitekit event throttler) is dropped: it only existed to serve the
+     WordPress plugin, which is gone. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GT-PJ79P9DK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('set', 'linker', { domains: ['associateownersgroup.com'] });
+  gtag('js', new Date());
+  gtag('config', 'GT-PJ79P9DK');
+</script>"""
+
+
 NAV = [('/', 'Home'), ('/our-team/', 'Leadership'), ('/partners/', 'Partners'),
        ('/press/', 'Press'), ('/events/', 'Events'), ('/contact/', 'Contact')]
 
@@ -119,6 +133,7 @@ def shell(title, desc, body, canonical):
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script>document.documentElement.classList.add('js')</script>
 <link rel="stylesheet" href="/assets/aog.css?v=%(v)s">
+%(analytics)s
 </head>
 <body>
 
@@ -144,7 +159,29 @@ def shell(title, desc, body, canonical):
 </body>
 </html>
 """ % dict(title=title, desc=desc, canonical=canonical, nav=nav,
-           body=body, footer=FOOTER, script=SCRIPT, v=ASSET_V)
+           body=body, footer=FOOTER, script=SCRIPT, v=ASSET_V,
+           analytics=ANALYTICS)
+
+
+
+def marquee():
+    """The family of companies as a continuous loop.
+
+    The list is emitted twice and the track slides exactly one copy's width,
+    so the seam is invisible and there is no visual first or last. Only the
+    first copy is exposed to assistive tech and crawlers.
+    """
+    def run(hidden):
+        return '\n        '.join(
+            '<div class="marquee__item"><img src="/wp-content/uploads/%s" alt="%s" loading="lazy"></div>'
+            % (f, '' if hidden else alt) for f, alt in PARTNERS)
+
+    return """      <div class="marquee r">
+        <div class="marquee__track">
+        %s
+        </div>
+      </div>""" % (run(False) + '\n        ' +
+                   '<div aria-hidden="true" style="display:contents">' + run(True) + '</div>')
 
 
 def phead(tag, num, h1, lede=''):
@@ -176,6 +213,8 @@ CLOSER = """  <section class="band dark">
   </section>
 """
 
+# The complete family, matching the original site's carousel. Rhino RE and
+# JavanShield were missing from the first pass.
 PARTNERS = [
     ('common-sense-financial-logo-768x204.png', 'Common Sense Financial'),
     ('experior-logo.png', 'Experior Financial Group'),
@@ -187,8 +226,10 @@ PARTNERS = [
     ('insurtech-hub-logo.png', 'InsurTech Hub'),
     ('aog-canada-logo.png', 'AOG Canada'),
     ('tkt-logo-1.png', 'TKT Consulting'),
-    ('Entry-6-Copper_Logo_L_fullcolor_onwhite.png', 'Copper CRM'),
+    ('d3b9f93f-a7e3-429f-99af-02a55a54dd93.png', 'Rhino RE'),
+    ('javanshield-logo.png', 'JavanShield'),
     ('GFS-2-768x768.png', 'GFS'),
+    ('Entry-6-Copper_Logo_L_fullcolor_onwhite.png', 'Copper CRM'),
 ]
 
 TEAM = [
@@ -356,16 +397,12 @@ def main():
                               body + CLOSER, '/our-team/')))
 
     # ---- Partners ---------------------------------------------------------
-    logos = '\n        '.join(
-        '<div><img src="/wp-content/uploads/%s" alt="%s" loading="lazy"></div>' % (f, alt)
-        for f, alt in PARTNERS)
+    logos = marquee()
     body = phead('The Family of Companies', '02', 'Built alongside the best in the industry.',
                  'AOG is proud to collaborate with premier financial service firms across the '
                  'United States and Canada. Together we create opportunities for growth and excellence.') + """  <section class="band">
     <div class="wrap">
-      <div class="logos r">
-        %s
-      </div>
+%s
     </div>
   </section>
 """ % logos

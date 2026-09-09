@@ -396,3 +396,48 @@ p:last-child { margin-bottom: 0; }
   .postlist a { grid-template-columns: 1fr; gap: 8px; }
   .postlist span { display: none; }
 }
+
+/* ═══ Family of companies — continuous marquee ═══════════════════════════
+   A loop rather than a grid, so no company reads as first or last. The
+   track holds the list twice and slides exactly one copy's width, which
+   makes the seam invisible; the second copy is aria-hidden so screen
+   readers and search engines see each company once.
+   ═══════════════════════════════════════════════════════════════════════ */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  /* Fade the edges so logos enter and leave rather than popping. */
+  mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+}
+.dark .marquee { border-color: var(--rule-dark); }
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-dur, 46s) linear infinite;
+}
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track { animation-play-state: paused; }
+
+.marquee__item {
+  flex: 0 0 auto;
+  width: clamp(168px, 15vw, 228px);
+  aspect-ratio: 16 / 7;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px 24px;
+  background: var(--white);
+  border-right: 1px solid var(--rule);
+}
+.marquee__item img { max-height: 100%; width: auto; object-fit: contain; }
+
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Without animation it becomes a plain scrollable strip — still no first
+   or last visually, and reachable by keyboard and trackpad. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee { overflow-x: auto; mask-image: none; -webkit-mask-image: none; }
+  .marquee__track { animation: none; }
+}
