@@ -239,6 +239,9 @@ p:last-child { margin-bottom: 0; }
 .news { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
 .post { background: var(--white); padding: 26px 24px 28px; display: flex; flex-direction: column; transition: background-color .2s; }
 .post:hover { background: var(--grey-1); }
+/* The lead card spans two columns, so the grid holds n+1 cells for n cards.
+   A gap-free grid needs n+1 divisible by both 3 (wide) and 2 (mid), i.e.
+   n = 5 or 11. The home page runs 5; changing that count reopens the tail. */
 .post--big { grid-column: span 2; }
 .post time { font: 500 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--grey-3); }
 .post h3 { margin: 12px 0 9px; }
