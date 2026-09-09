@@ -214,7 +214,7 @@ def shell(title, desc, body, canonical, og_type='website'):
 <header class="hdr" id="hdr">
   <div class="wrap">
     <a class="hdr__logo" href="/" aria-label="Associate Owners Group — home">
-      <img src="/assets/logo-white.svg" alt="Associate Owners Group" width="190" height="45">
+      <img src="/assets/logo-white.svg" alt="Associate Owners Group" width="240" height="57">
     </a>
     <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="nav"><i></i><i></i><i></i></button>
     <nav class="nav" id="nav">
