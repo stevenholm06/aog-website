@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://use.typekit.net/ucl6kcm.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script>document.documentElement.classList.add('js')</script>
-<link rel="stylesheet" href="/assets/aog.css?v=20260909094702">
+<link rel="stylesheet" href="/assets/aog.css?v=20260909095131">
 <!-- Google tag (gtag.js) — restored from the original WordPress head.
      The Site Kit plumbing that surrounded it there (developer_id, the
      _googlesitekit event throttler) is dropped: it only existed to serve the
@@ -50,16 +50,28 @@
 
   <!-- ═══ Hero ═══════════════════════════════════════════════════════════ -->
   <section class="hero">
-    <img class="hero__mark" src="/assets/rhino-white.svg" alt="" aria-hidden="true">
     <div class="wrap">
-      <p class="tag"><b>AOG</b> Associate Owners Group</p>
-      <h1>The people who build the business should <span>own it.</span></h1>
-      <p class="hero__lede">AOG unites insurance agencies, broker-dealers, RIAs and vendors under a single shared equity structure. Built for Associates. Built for the Future.</p>
-      <div class="hero__cta">
-        <a class="btn btn--y" href="/join/">Become a Partner <i>→</i></a>
-        <a class="btn btn--linew" href="#heroes">Watch the Heroes Film</a>
-      </div>
+      <div class="hero__grid">
+        <div class="hero__copy">
+          <p class="tag"><b>AOG</b> Associate Owners Group</p>
+          <h1>The people who build the business should <span>own it.</span></h1>
+          <p class="hero__lede">AOG unites insurance agencies, broker-dealers, RIAs and vendors under a single shared equity structure. Built for Associates. Built for the Future.</p>
+          <div class="hero__cta">
+            <a class="btn btn--y" href="/join/">Become a Partner <i>&rarr;</i></a>
+            <a class="btn btn--linew" href="#model">See the Model</a>
+          </div>
+        </div>
 
+        <figure class="hero__film">
+          <video id="heroesVideo" controls preload="none" playsinline
+                 poster="/assets/video/poster-heroes.jpg">
+            <source src="/assets/video/aog-heroes.mp4" type="video/mp4">
+            Your browser cannot play this video.
+            <a href="/assets/video/aog-heroes.mp4">Download the Heroes film</a>.
+          </video>
+          <figcaption><span>Watch</span> The Heroes film &mdash; why the people who create the value should own it.</figcaption>
+        </figure>
+      </div>
     </div>
   </section>
 
@@ -87,18 +99,6 @@
         </ol>
       </div>
 
-      <figure class="heroes r">
-        <video id="heroesVideo" controls preload="none" playsinline
-               poster="/assets/video/poster-heroes.jpg">
-          <source src="/assets/video/aog-heroes.mp4" type="video/mp4">
-          Your browser cannot play this video.
-          <a href="/assets/video/aog-heroes.mp4">Download the Heroes film</a>.
-        </video>
-        <figcaption>
-          <span class="tag tag--plain">Watch</span>
-          <p>The Heroes film — why the people who create the value should own it.</p>
-        </figcaption>
-      </figure>
     </div>
   </section>
 
