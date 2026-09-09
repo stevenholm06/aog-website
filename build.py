@@ -1,0 +1,549 @@
+#!/usr/bin/env python3
+"""Generate the AOG interior pages from one shared shell.
+
+Lives outside public/ so it is never served — same principle as README.md.
+
+The home page (public/index.html) is hand-maintained; everything else is
+emitted here so the header, footer and design system can only ever be
+defined once.
+
+Press-release copy is extracted ONCE from the original WordPress export
+into content/releases.json, and every build thereafter reads that file.
+This matters: the generator writes to the same paths it reads from, so
+parsing the live pages on every run would mean the second run scraped its
+own output and emitted empty articles. The JSON is the source of truth —
+edit it, not the generated HTML.
+
+Run:  python3 build.py
+"""
+
+import glob
+import html
+import json
+import io
+import os
+import re
+import time
+
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'public')
+
+# Stamped onto the stylesheet URL. Browsers cache aog.css hard, so without a
+# version token a deploy can leave visitors on the previous design.
+ASSET_V = time.strftime('%Y%m%d%H%M')
+
+NAV = [('/', 'Home'), ('/our-team/', 'Leadership'), ('/partners/', 'Partners'),
+       ('/press/', 'Press'), ('/events/', 'Events'), ('/contact/', 'Contact')]
+
+FOOTER = """<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr__g">
+      <div>
+        <div class="ftr__logo"><img src="/assets/logo-white.svg" alt="Associate Owners Group" width="178" height="42"></div>
+        <p class="ftr__note">Built for Associates. Built for the Future.</p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/our-team/">Leadership</a></li>
+          <li><a href="/partners/">Partners</a></li>
+          <li><a href="/press/">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Engage</h4>
+        <ul>
+          <li><a href="/join/">Join AOG</a></li>
+          <li><a href="/events/">Events</a></li>
+          <li><a href="/annual-meeting/">Annual Meeting</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:info@associateownersgroup.com">info@associateownersgroup.com</a></li>
+          <li><a href="tel:+18017388858">+1 801-738-8858</a></li>
+          <li>616 S. 300 E<br>St. George, Utah 84770</li>
+          <li style="opacity:.7">Mon&ndash;Fri, 9am&ndash;5pm MST</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ftr__bar"><span>&copy; 2026 Associate Owners Group, Inc. All rights reserved.</span></div>
+  </div>
+</footer>"""
+
+SCRIPT = """<script>
+(function () {
+  var hdr = document.getElementById('hdr');
+  var onScroll = function () { hdr.classList.toggle('stuck', scrollY > 30); };
+  onScroll(); addEventListener('scroll', onScroll, { passive: true });
+
+  var burger = document.getElementById('burger'), nav = document.getElementById('nav');
+  burger.addEventListener('click', function () {
+    burger.setAttribute('aria-expanded', String(nav.classList.toggle('open')));
+  });
+  nav.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') { nav.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }
+  });
+
+  var items = document.querySelectorAll('.r');
+  var showAll = function () { items.forEach(function (el) { el.classList.add('on'); }); };
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { showAll(); }
+  else {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: .05 });
+    items.forEach(function (el) { io.observe(el); });
+    // Observers do not fire in hidden tabs; never leave the page invisible.
+    setTimeout(function () { if (!document.querySelector('.r.on')) showAll(); }, 1200);
+  }
+})();
+</script>"""
+
+
+def shell(title, desc, body, canonical):
+    nav = '\n      '.join(
+        '<a href="%s">%s</a>' % (href, label) for href, label in NAV)
+    return """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>%(title)s</title>
+<meta name="description" content="%(desc)s">
+<link rel="canonical" href="https://associateownersgroup.com%(canonical)s">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Proxima Nova is the brand face (licensed via Adobe Fonts). Drop the kit
+     <link> in here and it takes over automatically — the CSS lists it first.
+     Figtree below is the free stand-in until then. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="/assets/aog.css?v=%(v)s">
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="hdr__logo" href="/" aria-label="Associate Owners Group — home">
+      <img src="/assets/logo-white.svg" alt="Associate Owners Group" width="190" height="45">
+    </a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="nav"><i></i><i></i><i></i></button>
+    <nav class="nav" id="nav">
+      %(nav)s
+      <a class="btn btn--y" href="/join/">Become a Partner</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+%(body)s
+</main>
+
+%(footer)s
+%(script)s
+</body>
+</html>
+""" % dict(title=title, desc=desc, canonical=canonical, nav=nav,
+           body=body, footer=FOOTER, script=SCRIPT, v=ASSET_V)
+
+
+def phead(tag, num, h1, lede=''):
+    return """  <section class="phead">
+    <img class="phead__mark" src="/assets/rhino-white.svg" alt="" aria-hidden="true">
+    <div class="wrap">
+      <p class="tag"><b>%s</b> %s</p>
+      <h1>%s</h1>
+      %s
+    </div>
+  </section>
+""" % (num, tag, h1, ('<p class="phead__lede">%s</p>' % lede) if lede else '')
+
+
+CLOSER = """  <section class="band dark">
+    <div class="wrap">
+      <div class="closer r">
+        <div>
+          <p class="tag"><b>&rarr;</b> Get Started</p>
+          <h2>Ready to join <span>the network?</span></h2>
+          <p>Discover how AOG can help your agency thrive through collaboration and shared success.</p>
+        </div>
+        <div class="closer__c">
+          <a class="btn btn--y" href="/join/">Join AOG <i>&rarr;</i></a>
+          <a class="btn btn--linew" href="/contact/">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+"""
+
+PARTNERS = [
+    ('common-sense-financial-logo-768x204.png', 'Common Sense Financial'),
+    ('experior-logo.png', 'Experior Financial Group'),
+    ('your-ia-logo-new.png', 'Your IA'),
+    ('aog-tech-logo.png', 'AOG Tech'),
+    ('wellthplan-logo-new.png', 'Wellthplan'),
+    ('netexit-logo.png', 'NetExit Insurance Services'),
+    ('canyon-logo.png', 'Canyon Insurance'),
+    ('insurtech-hub-logo.png', 'InsurTech Hub'),
+    ('aog-canada-logo.png', 'AOG Canada'),
+    ('tkt-logo-1.png', 'TKT Consulting'),
+    ('Entry-6-Copper_Logo_L_fullcolor_onwhite.png', 'Copper CRM'),
+    ('GFS-2-768x768.png', 'GFS'),
+]
+
+TEAM = [
+    ('monte-holm-headhot-charcoal-480x480.jpg', 'Monte Holm', 'Founder &amp; Chairman'),
+    ('jerry-vahl-headshot-charcoal-480x480.jpg', 'Jerry Vahl', 'Chief Executive Officer'),
+    ('colby-clark-headshot-charcoal-480x480.jpg', 'Colby Clark', 'Chief Legal Officer'),
+    ('colby-haupt-headshot-charcoal-480x480.jpg', 'Colby Haupt', 'Chief Operating Officer'),
+]
+
+
+# --------------------------------------------------------------------------
+# Press releases: read title, date and body out of the WordPress export so
+# the published copy is carried over verbatim.
+# --------------------------------------------------------------------------
+
+def strip(x):
+    return re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', '', x))).strip()
+
+
+def read_release(path):
+    s = io.open(path, encoding='utf-8').read()
+    h1 = re.search(r'<h1[^>]*>(.*?)</h1>', s, re.S)
+    date = re.search(r'>([A-Z][a-z]+ \d{1,2}, \d{4})<', s)
+    seg = re.search(r'brxe-post-content[^>]*>(.*?)</section>', s, re.S)
+    paras = []
+    if seg:
+        for p in re.findall(r'<p[^>]*>(.*?)</p>', seg.group(1), re.S):
+            txt = strip(p)
+            if len(txt) > 25:
+                paras.append(txt)
+    return dict(slug=path.split(os.sep)[-2],
+                title=strip(h1.group(1)) if h1 else 'Press Release',
+                date=date.group(1) if date else '',
+                paras=paras)
+
+
+def sort_key(r):
+    months = ('January February March April May June July August September '
+              'October November December').split()
+    m = re.match(r'([A-Z][a-z]+) (\d{1,2}), (\d{4})', r['date'] or '')
+    if not m:
+        return (0, 0, 0)
+    return (int(m.group(3)), months.index(m.group(1)) + 1, int(m.group(2)))
+
+
+DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'content', 'releases.json')
+
+
+def load_releases():
+    """Return the releases, extracting from the WordPress export only once.
+
+    Once content/releases.json exists it is authoritative. Re-extracting on
+    every run would scrape this script's own generated pages.
+    """
+    if os.path.exists(DATA):
+        with io.open(DATA, encoding='utf-8') as fh:
+            return json.load(fh)
+
+    rows = []
+    for path in glob.glob(os.path.join(ROOT, 'press-release', '*', 'index.html')):
+        src = io.open(path, encoding='utf-8').read()
+        if 'brxe-post-content' not in src:
+            raise SystemExit(
+                'Cannot build: %s is already generated and content/releases.json '
+                'is missing, so the original copy is unavailable. Restore the '
+                'press-release pages from git first.' % path)
+        rows.append(read_release(path))
+
+    rows.sort(key=sort_key, reverse=True)
+    os.makedirs(os.path.dirname(DATA), exist_ok=True)
+    with io.open(DATA, 'w', encoding='utf-8') as fh:
+        fh.write(json.dumps(rows, indent=2, ensure_ascii=False))
+    print('extracted %d releases -> %s' % (len(rows), os.path.relpath(DATA)))
+    return rows
+
+
+def write(relpath, text):
+    full = os.path.join(ROOT, relpath)
+    os.makedirs(os.path.dirname(full), exist_ok=True)
+    io.open(full, 'w', encoding='utf-8').write(text)
+    return relpath
+
+
+def main():
+    written = []
+
+    releases = load_releases()
+
+    # ---- Press release pages ---------------------------------------------
+    for i, r in enumerate(releases):
+        body_paras = '\n        '.join('<p>%s</p>' % html.escape(p) for p in r['paras'])
+        nxt = releases[i + 1] if i + 1 < len(releases) else None
+        more = ''
+        if nxt:
+            more = ('<p style="margin-top:38px"><a class="btn btn--line" href="/press-release/%s/">'
+                    'Next: %s <i>&rarr;</i></a></p>' % (nxt['slug'], html.escape(nxt['title'][:58])))
+        body = """  <section class="phead">
+    <img class="phead__mark" src="/assets/rhino-white.svg" alt="" aria-hidden="true">
+    <div class="wrap">
+      <p class="tag"><b>PR</b> Press Release</p>
+      <h1>%(title)s</h1>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <a class="backlink" href="/press/"><i>&larr;</i> All press releases</a>
+      <div class="article__meta"><time>%(date)s</time><span>Associate Owners Group</span></div>
+      <div class="prose">
+        %(paras)s
+      </div>
+      %(more)s
+    </div>
+  </section>
+""" % dict(title=html.escape(r['title']), date=r['date'], paras=body_paras, more=more)
+        desc = (r['paras'][0][:155] if r['paras'] else r['title'])
+        written.append(write('press-release/%s/index.html' % r['slug'],
+                            shell('%s — Associate Owners Group' % r['title'],
+                                  html.escape(desc), body + CLOSER,
+                                  '/press-release/%s/' % r['slug'])))
+
+    # ---- Press index ------------------------------------------------------
+    rows = '\n      '.join(
+        '<a href="/press-release/%s/"><time>%s</time><h2>%s</h2><span>Read &rarr;</span></a>'
+        % (r['slug'], r['date'], html.escape(r['title'])) for r in releases)
+    body = phead('Press', 'PR', 'News from across the family of companies.',
+                 'Announcements, acquisitions and industry insight from the AOG network.') + """  <section class="band">
+    <div class="wrap">
+      <div class="postlist r">
+      %s
+      </div>
+    </div>
+  </section>
+""" % rows
+    written.append(write('press/index.html',
+                        shell('Press — Associate Owners Group',
+                              'Announcements, acquisitions and industry insight from across the AOG family of companies.',
+                              body + CLOSER, '/press/')))
+
+    # ---- Leadership -------------------------------------------------------
+    people = '\n        '.join(
+        '<article class="who"><img src="/wp-content/uploads/%s" alt="%s" width="480" height="480" loading="lazy">'
+        '<div class="who__b"><h3>%s</h3><span>%s</span></div></article>' % (img, name, name, role)
+        for img, name, role in TEAM)
+    body = phead('Leadership', '01', 'In service of the heroes of distribution.',
+                 'AOG&rsquo;s leadership exists to support the Associates who write the business &mdash; '
+                 'not the other way around.') + """  <section class="band">
+    <div class="wrap">
+      <div class="head r">
+        <div>
+          <p class="tag"><b>&mdash;</b> The Team</p>
+          <h2>Dedicated to supporting the network.</h2>
+        </div>
+        <p>Experienced professionals dedicated to supporting our network of agency owners and driving the success of the Associate Owners Group.</p>
+      </div>
+      <div class="team r">
+        %s
+      </div>
+    </div>
+  </section>
+""" % people
+    written.append(write('our-team/index.html',
+                        shell('Leadership — Associate Owners Group',
+                              'The AOG leadership team exists to support the Associates who write the business.',
+                              body + CLOSER, '/our-team/')))
+
+    # ---- Partners ---------------------------------------------------------
+    logos = '\n        '.join(
+        '<div><img src="/wp-content/uploads/%s" alt="%s" loading="lazy"></div>' % (f, alt)
+        for f, alt in PARTNERS)
+    body = phead('The Family of Companies', '02', 'Built alongside the best in the industry.',
+                 'AOG is proud to collaborate with premier financial service firms across the '
+                 'United States and Canada. Together we create opportunities for growth and excellence.') + """  <section class="band">
+    <div class="wrap">
+      <div class="logos r">
+        %s
+      </div>
+    </div>
+  </section>
+""" % logos
+    written.append(write('partners/index.html',
+                        shell('Partners — Associate Owners Group',
+                              'AOG collaborates with premier financial service firms across the United States and Canada.',
+                              body + CLOSER, '/partners/')))
+
+    # ---- Join (Copper form preserved) -------------------------------------
+    body = phead('Membership', '03', 'Join the AOG network.',
+                 'Become part of a premier network of independent financial service firms. '
+                 'Together, we&rsquo;re stronger, smarter, and more successful.') + """  <section class="band">
+    <div class="wrap">
+      <div class="withform r">
+        <div>
+          <p class="tag"><b>&mdash;</b> What you get</p>
+          <h2>Four foundations beneath one producer.</h2>
+          <ul class="rules" style="margin-top:30px">
+            <li><span>01</span><div><strong>Collaborative network.</strong> Join a community of successful agency owners sharing best practices and strategies.</div></li>
+            <li><span>02</span><div><strong>Resources and scale.</strong> Access exclusive tools, resources and partnerships to grow your business.</div></li>
+            <li><span>03</span><div><strong>Collective strength.</strong> Benefit from collective bargaining power and regulatory representation.</div></li>
+            <li><span>04</span><div><strong>Strategic partnerships.</strong> Connect with leading carriers and service providers on preferential terms.</div></li>
+          </ul>
+
+          <p class="tag" style="margin-top:52px"><b>&mdash;</b> Membership requirements</p>
+          <h2 style="font-size:clamp(24px,2.4vw,34px)">We are intentional about who joins.</h2>
+          <p style="margin-top:16px">AOG seeks established agencies and firms committed to excellence, collaboration and mutual growth. Our members represent the best in the industry.</p>
+          <ul class="rules" style="margin-top:22px">
+            <li><span>01</span><div>Independent insurance agency or financial services firm</div></li>
+            <li><span>02</span><div>Minimum three years in business</div></li>
+            <li><span>03</span><div>Strong compliance and professional standards</div></li>
+            <li><span>04</span><div>Commitment to network collaboration and growth</div></li>
+            <li><span>05</span><div>Willingness to share best practices with peers</div></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="tag"><b>&mdash;</b> Apply</p>
+          <div class="formcard">
+            <iframe src="https://forms.copper.com/j/9VhnRumM7B7VWGmLAyTkuH?type=embed"
+                    id="9VhnRumM7B7VWGmLAyTkuH" title="Apply for membership" height="850"
+                    loading="lazy"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+"""
+    written.append(write('join/index.html',
+                        shell('Join AOG — Associate Owners Group',
+                              'Become part of a premier network of independent financial service firms.',
+                              body, '/join/')))
+
+    # ---- Contact (Copper form preserved) ----------------------------------
+    body = phead('Contact', '04', 'Let&rsquo;s talk about ownership.',
+                 'Interested in joining AOG or learning more about our services? '
+                 'We&rsquo;d love to hear from you.') + """  <section class="band">
+    <div class="wrap">
+      <div class="withform r">
+        <div>
+          <p class="tag"><b>&mdash;</b> Contact information</p>
+          <h2>Get in touch.</h2>
+          <dl class="deflist" style="margin-top:28px">
+            <div><dt>Email</dt><dd><a href="mailto:info@associateownersgroup.com">info@associateownersgroup.com</a></dd></div>
+            <div><dt>Phone</dt><dd><a href="tel:+18017388858">+1 801-738-8858</a></dd></div>
+            <div><dt>Office</dt><dd>616 S. 300 E<br>St. George, Utah 84770</dd></div>
+            <div><dt>Office hours</dt><dd>Monday&ndash;Friday, 9am&ndash;5pm MST<br>Saturday&ndash;Sunday, closed</dd></div>
+          </dl>
+        </div>
+
+        <div>
+          <p class="tag"><b>&mdash;</b> Send a message</p>
+          <div class="formcard">
+            <iframe src="https://forms.copper.com/j/dAudnbY8vtoGf1YXRaVfnN?type=embed"
+                    id="dAudnbY8vtoGf1YXRaVfnN" title="Contact AOG" height="600"
+                    loading="lazy"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+"""
+    written.append(write('contact/index.html',
+                        shell('Contact — Associate Owners Group',
+                              'Reach AOG by email, phone or the contact form. Offices in St. George, Utah.',
+                              body, '/contact/')))
+
+    # ---- Events -----------------------------------------------------------
+    body = phead('Events', '05', 'See what&rsquo;s coming up next.',
+                 'Join us at an event near you.') + """  <section class="band">
+    <div class="wrap">
+      <div class="feature r">
+        <div class="feature__i" style="background:var(--grey-1);border-color:var(--rule)">
+          <img src="/wp-content/uploads/AOG-Annual-Meeting-Re-Sized-for-Website-1-720x1113.png" alt="AOG Annual Meeting" loading="lazy">
+        </div>
+        <div>
+          <p class="tag"><b>&mdash;</b> Upcoming</p>
+          <h2>Associate Owners Group Annual Meeting</h2>
+          <p class="feature__when" style="color:var(--gold-d)">April 28&ndash;29, 2026 &middot; Orange County Convention Center &middot; Orlando, Florida</p>
+          <p>A day and a half to connect with industry leaders, explore new ideas, and gain insights that support growth and innovation.</p>
+          <p style="margin-top:24px"><a class="btn btn--y" href="/annual-meeting/">Details &amp; Tickets <i>&rarr;</i></a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+"""
+    written.append(write('events/index.html',
+                        shell('Events — Associate Owners Group',
+                              'Upcoming AOG events, including the 2026 Annual Meeting in Orlando, Florida.',
+                              body + CLOSER, '/events/')))
+
+    # ---- Annual meeting ---------------------------------------------------
+    body = phead('Annual Meeting', '06', 'A day and a half with the people building this.',
+                 'Orange County Convention Center &middot; April 28&ndash;29, 2026') + """  <section class="band">
+    <div class="wrap">
+      <div class="feature r">
+        <div class="feature__i" style="background:var(--grey-1);border-color:var(--rule)">
+          <img src="/wp-content/uploads/AOG-Annual-Meeting-Re-Sized-for-Website-1-720x1113.png" alt="AOG Annual Meeting" loading="lazy">
+        </div>
+        <div>
+          <p class="tag"><b>&mdash;</b> The 2026 meeting</p>
+          <h2>Connect, explore, and take something back.</h2>
+          <p style="margin-top:18px">We invite you to join us for the 2026 AOG Meeting. During this day-and-a-half event you will have the opportunity to connect with industry leaders, explore new ideas, and gain insights to support growth and innovation.</p>
+          <p>This event is designed to provide meaningful strategies and perspectives to help shape the future of your work.</p>
+          <p style="margin-top:26px"><a class="btn btn--y" href="/contact/">Secure Your Tickets <i>&rarr;</i></a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+"""
+    written.append(write('annual-meeting/index.html',
+                        shell('Annual Meeting — Associate Owners Group',
+                              'The 2026 AOG Annual Meeting, April 28-29 at the Orange County Convention Center, Orlando.',
+                              body + CLOSER, '/annual-meeting/')))
+
+    # ---- 404 --------------------------------------------------------------
+    body = phead('Error 404', '404', 'That page isn&rsquo;t here.',
+                 'The link may be out of date, or the page may have moved.') + """  <section class="band">
+    <div class="wrap">
+      <div class="head head--solo r">
+        <div>
+          <p class="tag"><b>&mdash;</b> Try instead</p>
+          <h2>Where would you like to go?</h2>
+          <p style="margin-top:22px">
+            <a class="btn btn--line" href="/">Home <i>&rarr;</i></a>
+            <a class="btn btn--line" href="/press/" style="margin-left:10px">Press <i>&rarr;</i></a>
+            <a class="btn btn--line" href="/contact/" style="margin-left:10px">Contact <i>&rarr;</i></a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+"""
+    written.append(write('404.html',
+                        shell('Page not found — Associate Owners Group',
+                              'That page could not be found.', body, '/404.html')))
+
+    # ---- Author archive (linked as a byline from the press releases) ------
+    rows = '\n      '.join(
+        '<a href="/press-release/%s/"><time>%s</time><h2>%s</h2><span>Read &rarr;</span></a>'
+        % (r['slug'], r['date'], html.escape(r['title'])) for r in releases)
+    body = phead('Author', '&mdash;', 'Posts by M. Gutierrez.') + """  <section class="band">
+    <div class="wrap">
+      <div class="postlist r">
+      %s
+      </div>
+    </div>
+  </section>
+""" % rows
+    written.append(write('author/mgutierrez/index.html',
+                        shell('M. Gutierrez — Associate Owners Group',
+                              'Press releases from Associate Owners Group.', body, '/author/mgutierrez/')))
+
+    print('%d pages written (%d press releases + %d others)'
+          % (len(written), len(releases), len(written) - len(releases)))
+    for w in written[len(releases):]:
+        print('  ', w)
+
+
+if __name__ == '__main__':
+    main()
