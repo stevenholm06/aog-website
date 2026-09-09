@@ -11,6 +11,21 @@
 <link rel="manifest" href="/assets/site.webmanifest">
 <meta name="theme-color" content="#2B3439">
 <link rel="canonical" href="https://associateownersgroup.com/contact/">
+
+<!-- Social cards. Without these a shared link renders as a bare URL. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Associate Owners Group">
+<meta property="og:title" content="Contact — Associate Owners Group">
+<meta property="og:description" content="Reach AOG by email, phone or the contact form. Offices in St. George, Utah.">
+<meta property="og:url" content="https://associateownersgroup.com/contact/">
+<meta property="og:image" content="https://associateownersgroup.com/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Associate Owners Group — Built for Associates. Built for the Future.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Contact — Associate Owners Group">
+<meta name="twitter:description" content="Reach AOG by email, phone or the contact form. Offices in St. George, Utah.">
+<meta name="twitter:image" content="https://associateownersgroup.com/assets/og-image.png">
 <link rel="preconnect" href="https://use.typekit.net">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +33,7 @@
 <link rel="stylesheet" href="https://use.typekit.net/ucl6kcm.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script>document.documentElement.classList.add('js')</script>
-<link rel="stylesheet" href="/assets/aog.css?v=202609091008">
+<link rel="stylesheet" href="/assets/aog.css?v=202609091019">
 <!-- Google tag (gtag.js) — restored from the original WordPress head.
      The Site Kit plumbing that surrounded it there (developer_id, the
      _googlesitekit event throttler) is dropped: it only existed to serve the
@@ -33,6 +48,8 @@
 </script>
 </head>
 <body>
+
+<a class="skip" href="#main">Skip to content</a>
 
 <header class="hdr" id="hdr">
   <div class="wrap">
@@ -52,7 +69,7 @@
   </div>
 </header>
 
-<main>
+<main id="main">
   <section class="phead">
     <img class="phead__mark" src="/assets/rhino-white.svg" alt="" aria-hidden="true">
     <div class="wrap">
@@ -125,6 +142,36 @@
     <div class="ftr__bar"><span>&copy; 2026 Associate Owners Group, Inc. All rights reserved.</span></div>
   </div>
 </footer>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Associate Owners Group",
+  "alternateName": "AOG",
+  "url": "https://associateownersgroup.com/",
+  "logo": "https://associateownersgroup.com/assets/icon-512.png",
+  "image": "https://associateownersgroup.com/assets/og-image.png",
+  "description": "AOG unites insurance agencies, broker-dealers, RIAs and vendors under a shared equity structure, so the people who build the business own it.",
+  "slogan": "Built for Associates. Built for the Future.",
+  "email": "info@aoginc.com",
+  "telephone": "+1-801-738-8858",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "620 S 400 E, Suite 404",
+    "addressLocality": "St. George",
+    "addressRegion": "UT",
+    "postalCode": "84770",
+    "addressCountry": "US"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "sales",
+    "email": "info@aoginc.com",
+    "telephone": "+1-801-738-8858",
+    "areaServed": ["US", "CA"]
+  }
+}
+</script>
 <script>
 (function () {
   var hdr = document.getElementById('hdr');

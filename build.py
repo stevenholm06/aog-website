@@ -32,6 +32,10 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'public')
 # version token a deploy can leave visitors on the previous design.
 ASSET_V = time.strftime('%Y%m%d%H%M')
 
+# Absolute origin, needed for canonicals, og:url and JSON-LD. If the site
+# moves to aoginc.com this is the single line to change.
+SITE = 'https://associateownersgroup.com'
+
 ANALYTICS = """<!-- Google tag (gtag.js) — restored from the original WordPress head.
      The Site Kit plumbing that surrounded it there (developer_id, the
      _googlesitekit event throttler) is dropped: it only existed to serve the
@@ -115,7 +119,39 @@ SCRIPT = """<script>
 </script>"""
 
 
-def shell(title, desc, body, canonical):
+ORG_JSONLD = """<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Associate Owners Group",
+  "alternateName": "AOG",
+  "url": "%(site)s/",
+  "logo": "%(site)s/assets/icon-512.png",
+  "image": "%(site)s/assets/og-image.png",
+  "description": "AOG unites insurance agencies, broker-dealers, RIAs and vendors under a shared equity structure, so the people who build the business own it.",
+  "slogan": "Built for Associates. Built for the Future.",
+  "email": "info@aoginc.com",
+  "telephone": "+1-801-738-8858",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "620 S 400 E, Suite 404",
+    "addressLocality": "St. George",
+    "addressRegion": "UT",
+    "postalCode": "84770",
+    "addressCountry": "US"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "sales",
+    "email": "info@aoginc.com",
+    "telephone": "+1-801-738-8858",
+    "areaServed": ["US", "CA"]
+  }
+}
+</script>""" % {'site': SITE}
+
+
+def shell(title, desc, body, canonical, og_type='website'):
     nav = '\n      '.join(
         '<a href="%s">%s</a>' % (href, label) for href, label in NAV)
     return """<!DOCTYPE html>
@@ -130,7 +166,22 @@ def shell(title, desc, body, canonical):
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/assets/site.webmanifest">
 <meta name="theme-color" content="#2B3439">
-<link rel="canonical" href="https://associateownersgroup.com%(canonical)s">
+<link rel="canonical" href="%(site)s%(canonical)s">
+
+<!-- Social cards. Without these a shared link renders as a bare URL. -->
+<meta property="og:type" content="%(ogtype)s">
+<meta property="og:site_name" content="Associate Owners Group">
+<meta property="og:title" content="%(title)s">
+<meta property="og:description" content="%(desc)s">
+<meta property="og:url" content="%(site)s%(canonical)s">
+<meta property="og:image" content="%(site)s/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Associate Owners Group — Built for Associates. Built for the Future.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="%(title)s">
+<meta name="twitter:description" content="%(desc)s">
+<meta name="twitter:image" content="%(site)s/assets/og-image.png">
 <link rel="preconnect" href="https://use.typekit.net">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -142,6 +193,8 @@ def shell(title, desc, body, canonical):
 %(analytics)s
 </head>
 <body>
+
+<a class="skip" href="#main">Skip to content</a>
 
 <header class="hdr" id="hdr">
   <div class="wrap">
@@ -156,17 +209,19 @@ def shell(title, desc, body, canonical):
   </div>
 </header>
 
-<main>
+<main id="main">
 %(body)s
 </main>
 
 %(footer)s
+%(orgjsonld)s
 %(script)s
 </body>
 </html>
 """ % dict(title=title, desc=desc, canonical=canonical, nav=nav,
            body=body, footer=FOOTER, script=SCRIPT, v=ASSET_V,
-           analytics=ANALYTICS)
+           analytics=ANALYTICS, site=SITE, ogtype=og_type,
+           orgjsonld=ORG_JSONLD)
 
 
 
@@ -407,7 +462,7 @@ def main():
         written.append(write('press-release/%s/index.html' % r['slug'],
                             shell('%s — Associate Owners Group' % r['title'],
                                   html.escape(desc), body + CLOSER,
-                                  '/press-release/%s/' % r['slug'])))
+                                  '/press-release/%s/' % r['slug'], og_type='article')))
 
     # ---- Press index ------------------------------------------------------
     rows = '\n      '.join(

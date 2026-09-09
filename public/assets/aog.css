@@ -283,6 +283,28 @@ p:last-child { margin-bottom: 0; }
 .ftr__note { margin-top: 15px; max-width: 30ch; font-size: 14.5px; }
 .ftr__bar { border-top: 1px solid var(--rule-dark); padding: 18px 0; font: 400 12.5px/1.5 var(--mono); display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
 
+/* --- Focus -----------------------------------------------------------------
+   Explicit rather than left to the browser: the default ring is a dark blue
+   that all but disappears against the gunmetal bands. :focus-visible so it
+   shows for keyboards without ringing every mouse click. */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+.dark :focus-visible, .hero :focus-visible, .phead :focus-visible, .hdr :focus-visible, .ftr :focus-visible {
+  outline-color: var(--gold);
+}
+.marquee__item :focus-visible { outline-offset: 1px; }
+
+/* Skip link — first tab stop, hidden until focused. */
+.skip {
+  position: absolute; left: 16px; top: -60px; z-index: 200;
+  padding: 12px 18px; background: var(--gold); color: var(--gun);
+  font: 600 13px/1 var(--body); transition: top .15s;
+}
+.skip:focus { top: 16px; }
+
 /* --- Reveal (gated on .js so content is never hidden without it) ---------- */
 .js .r { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
 .js .r.on { opacity: 1; transform: none; }
