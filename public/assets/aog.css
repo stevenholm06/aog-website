@@ -417,21 +417,24 @@ p:last-child { margin-bottom: 0; }
 .marquee__track {
   display: flex;
   width: max-content;
-  animation: marquee var(--marquee-dur, 46s) linear infinite;
+  animation: marquee var(--marquee-dur, 78s) linear infinite;
 }
 .marquee:hover .marquee__track,
 .marquee:focus-within .marquee__track { animation-play-state: paused; }
 
 .marquee__item {
   flex: 0 0 auto;
-  width: clamp(168px, 15vw, 228px);
-  aspect-ratio: 16 / 7;
+  /* Fixed height, auto width. Logos are normalised to a common optical
+     height and the tile widens to suit, which is the only way a 6:1 mark
+     and a 1:1 mark read as the same size. max-width guards the extremes. */
+  height: 104px;
+  min-width: 152px;
   display: flex; align-items: center; justify-content: center;
-  padding: 16px 24px;
+  padding: 0 30px;
   background: var(--white);
   border-right: 1px solid var(--rule);
 }
-.marquee__item img { max-height: 100%; width: auto; object-fit: contain; }
+.marquee__item img { height: 46px; width: auto; max-width: 188px; object-fit: contain; }
 
 @keyframes marquee { to { transform: translateX(-50%); } }
 

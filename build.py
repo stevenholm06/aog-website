@@ -173,8 +173,8 @@ def marquee():
     """
     def run(hidden):
         return '\n        '.join(
-            '<div class="marquee__item"><img src="/wp-content/uploads/%s" alt="%s" loading="lazy"></div>'
-            % (f, '' if hidden else alt) for f, alt in PARTNERS)
+            '<div class="marquee__item"><img src="%s" alt="%s" loading="lazy"></div>'
+            % (src, '' if hidden else alt) for src, alt in PARTNERS)
 
     return """      <div class="marquee r">
         <div class="marquee__track">
@@ -213,23 +213,33 @@ CLOSER = """  <section class="band dark">
   </section>
 """
 
-# The complete family, matching the original site's carousel. Rhino RE and
-# JavanShield were missing from the first pass.
+# The AOG family of companies. Vector where the brand supplied vector; the
+# 2026 brochure artwork supersedes the older WordPress uploads wherever both
+# exist (Canyon, Wellthplan, TKT, Rhino RE, JavanShield, Copper, Experior).
+# Paths are absolute because the set spans two directories.
 PARTNERS = [
-    ('common-sense-financial-logo-768x204.png', 'Common Sense Financial'),
-    ('experior-logo.png', 'Experior Financial Group'),
-    ('your-ia-logo-new.png', 'Your IA'),
-    ('aog-tech-logo.png', 'AOG Tech'),
-    ('wellthplan-logo-new.png', 'Wellthplan'),
-    ('netexit-logo.png', 'NetExit Insurance Services'),
-    ('canyon-logo.png', 'Canyon Insurance'),
-    ('insurtech-hub-logo.png', 'InsurTech Hub'),
-    ('aog-canada-logo.png', 'AOG Canada'),
-    ('tkt-logo-1.png', 'TKT Consulting'),
-    ('d3b9f93f-a7e3-429f-99af-02a55a54dd93.png', 'Rhino RE'),
-    ('javanshield-logo.png', 'JavanShield'),
-    ('GFS-2-768x768.png', 'GFS'),
-    ('Entry-6-Copper_Logo_L_fullcolor_onwhite.png', 'Copper CRM'),
+    ('/wp-content/uploads/common-sense-financial-logo-768x204.png', 'Common Sense Financial'),
+    ('/assets/logos/experior.png',                    'Experior Financial Group'),
+    ('/wp-content/uploads/your-ia-logo-new.png',      'Your IA'),
+    ('/assets/logos/wellthplan.svg',                  'Wellthplan'),
+    ('/wp-content/uploads/aog-tech-logo.png',         'AOG Tech'),
+    ('/wp-content/uploads/aog-canada-logo.png',       'AOG Canada'),
+    ('/assets/logos/aog-realty.svg',                  'AOG Realty'),
+    ('/assets/logos/rhino-re.svg',                    'Rhino RE'),
+    ('/assets/logos/canyon-insurance.png',            'Canyon Insurance'),
+    ('/wp-content/uploads/netexit-logo.png',          'NetExit Insurance Services'),
+    ('/wp-content/uploads/insurtech-hub-logo.png',    'InsurTech Hub'),
+    ('/assets/logos/javanshield.svg',                 'JavanShield'),
+    ('/assets/logos/tkt.svg',                         'TKT Consulting'),
+    ('/assets/logos/groupe-financier-signature.png',  'Groupe Financier Signature'),
+    ('/assets/logos/colab-capital.png',               'COLAB Capital'),
+    ('/assets/logos/bachmann-financial.png',          'Bachmann Financial Group'),
+    ('/assets/logos/ith-life.png',                    'ITH Life'),
+    ('/assets/logos/debt-medic.png',                  'Debt Medic'),
+    ('/assets/logos/first-asset-financial.png',       'First Asset Financial'),
+    ('/assets/logos/fisher-group.png',                'Fisher Group'),
+    ('/assets/logos/agency-contracting-services.png', 'Agency Contracting Services'),
+    ('/assets/logos/copper.svg',                      'Copper CRM'),
 ]
 
 TEAM = [
