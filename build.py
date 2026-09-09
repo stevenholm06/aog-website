@@ -125,6 +125,11 @@ def shell(title, desc, body, canonical):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>%(title)s</title>
 <meta name="description" content="%(desc)s">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/assets/site.webmanifest">
+<meta name="theme-color" content="#2B3439">
 <link rel="canonical" href="https://associateownersgroup.com%(canonical)s">
 <link rel="preconnect" href="https://use.typekit.net">
 <link rel="preconnect" href="https://fonts.googleapis.com">
