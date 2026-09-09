@@ -21,6 +21,7 @@ import glob
 import html
 import json
 import struct
+import hashlib
 import io
 import os
 import re
@@ -28,9 +29,23 @@ import time
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'public')
 
-# Stamped onto the stylesheet URL. Browsers cache aog.css hard, so without a
-# version token a deploy can leave visitors on the previous design.
-ASSET_V = time.strftime('%Y%m%d%H%M')
+def _asset_version():
+    """Stamp the stylesheet URL with a digest of its own contents.
+
+    Browsers cache aog.css hard enough that without a token a deploy can leave
+    visitors on the previous design. Deriving it from the file rather than the
+    clock keeps the build reproducible — otherwise every run restamps all 24
+    generated pages whether or not anything changed.
+    """
+    css = os.path.join(ROOT, 'assets', 'aog.css')
+    try:
+        with open(css, 'rb') as fh:
+            return hashlib.sha1(fh.read()).hexdigest()[:10]
+    except OSError:
+        return time.strftime('%Y%m%d%H%M')
+
+
+ASSET_V = _asset_version()
 
 # Absolute origin, needed for canonicals, og:url and JSON-LD. If the site
 # moves to aoginc.com this is the single line to change.
