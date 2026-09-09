@@ -275,7 +275,10 @@ PARTNERS = [
     ('/assets/logos/bachmann-financial.png',          'Bachmann Financial Group'),
     ('/assets/logos/ith-life.png',                    'ITH Life'),
     ('/assets/logos/debt-medic.png',                  'Debt Medic'),
-    ('/assets/logos/first-asset-financial.png',       'First Asset Financial'),
+    # Alt text carries the SIPC/FINRA line: at marquee scale it renders about
+    # 4.6px tall in the artwork, so it is legible to assistive tech and search
+    # even though the eye cannot read it there.
+    ('/assets/logos/first-asset-financial.svg',       'First Asset Financial — Member SIPC | FINRA'),
     ('/assets/logos/fisher-group.png',                'Fisher Group'),
     ('/assets/logos/agency-contracting-services.png', 'Agency Contracting Services'),
     ('/assets/logos/logos-wealth.svg',                'Logos Wealth Management'),
