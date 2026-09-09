@@ -68,7 +68,7 @@ FOOTER = """<footer class="ftr">
         <ul>
           <li><a href="/join/">Join AOG</a></li>
           <li><a href="/events/">Events</a></li>
-          <li><a href="/annual-meeting/">Annual Meeting</a></li>
+          <li><a href="/contact/">Contact Us</a></li>
         </ul>
       </div>
       <div>
@@ -218,13 +218,13 @@ CLOSER = """  <section class="band dark">
 # exist (Canyon, Wellthplan, TKT, Rhino RE, JavanShield, Copper, Experior).
 # Paths are absolute because the set spans two directories.
 PARTNERS = [
-    ('/wp-content/uploads/common-sense-financial-logo-768x204.png', 'Common Sense Financial'),
+    ('/assets/logos/common-sense-financial.png', 'Common Sense Financial'),
     ('/assets/logos/experior.png',                    'Experior Financial Group'),
     ('/wp-content/uploads/your-ia-logo-new.png',      'Your IA'),
     ('/assets/logos/wellthplan.svg',                  'Wellthplan'),
     ('/wp-content/uploads/aog-tech-logo.png',         'AOG Tech'),
     ('/wp-content/uploads/aog-canada-logo.png',       'AOG Canada'),
-    ('/assets/logos/aog-realty.svg',                  'AOG Realty'),
+    ('/assets/logos/aog-realty-holdings.svg',         'AOG Realty Holdings'),
     ('/assets/logos/rhino-re.svg',                    'Rhino RE'),
     ('/assets/logos/canyon-insurance.png',            'Canyon Insurance'),
     ('/wp-content/uploads/netexit-logo.png',          'NetExit Insurance Services'),
@@ -501,52 +501,28 @@ def main():
                               body, '/contact/')))
 
     # ---- Events -----------------------------------------------------------
-    body = phead('Events', '05', 'See what&rsquo;s coming up next.',
-                 'Join us at an event near you.') + """  <section class="band">
+    # The April 2026 Annual Meeting has taken place, so this no longer
+    # promotes it. The recap lives in the press archive.
+    body = phead('Events', '05', 'Nothing on the calendar right now.',
+                 'Our next gathering has not been announced yet. Get in touch and '
+                 'we will let you know as soon as dates are set.') + """  <section class="band">
     <div class="wrap">
-      <div class="feature r">
-        <div class="feature__i" style="background:var(--grey-1);border-color:var(--rule)">
-          <img src="/wp-content/uploads/AOG-Annual-Meeting-Re-Sized-for-Website-1-720x1113.png" alt="AOG Annual Meeting" loading="lazy">
-        </div>
+      <div class="head r">
         <div>
-          <p class="tag"><b>&mdash;</b> Upcoming</p>
-          <h2>Associate Owners Group Annual Meeting</h2>
-          <p class="feature__when" style="color:var(--gold-d)">April 28&ndash;29, 2026 &middot; Orange County Convention Center &middot; Orlando, Florida</p>
-          <p>A day and a half to connect with industry leaders, explore new ideas, and gain insights that support growth and innovation.</p>
-          <p style="margin-top:24px"><a class="btn btn--y" href="/annual-meeting/">Details &amp; Tickets <i>&rarr;</i></a></p>
+          <p class="tag"><b>&mdash;</b> Stay in the loop</p>
+          <h2>Be first to hear about the next one.</h2>
         </div>
+        <p>AOG brings the family of companies together to connect with industry leaders, explore new ideas and share what is working. Ask to be added to the invitation list, or read the recap of our most recent meeting.<br><br>
+          <a class="btn btn--line" href="/contact/">Get in Touch <i>&rarr;</i></a>
+          <a class="btn btn--line" href="/press/" style="margin-left:10px">Read the Recap <i>&rarr;</i></a></p>
       </div>
     </div>
   </section>
 """
     written.append(write('events/index.html',
                         shell('Events — Associate Owners Group',
-                              'Upcoming AOG events, including the 2026 Annual Meeting in Orlando, Florida.',
+                              'AOG events. No gatherings are currently scheduled; get in touch to be added to the invitation list.',
                               body + CLOSER, '/events/')))
-
-    # ---- Annual meeting ---------------------------------------------------
-    body = phead('Annual Meeting', '06', 'A day and a half with the people building this.',
-                 'Orange County Convention Center &middot; April 28&ndash;29, 2026') + """  <section class="band">
-    <div class="wrap">
-      <div class="feature r">
-        <div class="feature__i" style="background:var(--grey-1);border-color:var(--rule)">
-          <img src="/wp-content/uploads/AOG-Annual-Meeting-Re-Sized-for-Website-1-720x1113.png" alt="AOG Annual Meeting" loading="lazy">
-        </div>
-        <div>
-          <p class="tag"><b>&mdash;</b> The 2026 meeting</p>
-          <h2>Connect, explore, and take something back.</h2>
-          <p style="margin-top:18px">We invite you to join us for the 2026 AOG Meeting. During this day-and-a-half event you will have the opportunity to connect with industry leaders, explore new ideas, and gain insights to support growth and innovation.</p>
-          <p>This event is designed to provide meaningful strategies and perspectives to help shape the future of your work.</p>
-          <p style="margin-top:26px"><a class="btn btn--y" href="/contact/">Secure Your Tickets <i>&rarr;</i></a></p>
-        </div>
-      </div>
-    </div>
-  </section>
-"""
-    written.append(write('annual-meeting/index.html',
-                        shell('Annual Meeting — Associate Owners Group',
-                              'The 2026 AOG Annual Meeting, April 28-29 at the Orange County Convention Center, Orlando.',
-                              body + CLOSER, '/annual-meeting/')))
 
     # ---- 404 --------------------------------------------------------------
     body = phead('Error 404', '404', 'That page isn&rsquo;t here.',
