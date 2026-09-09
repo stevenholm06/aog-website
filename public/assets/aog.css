@@ -434,7 +434,13 @@ p:last-child { margin-bottom: 0; }
   background: var(--white);
   border-right: 1px solid var(--rule);
 }
-.marquee__item img { height: 46px; width: auto; max-width: 188px; object-fit: contain; }
+/* Heights per shape bucket, assigned in build.py from each file's intrinsic
+   ratio. Equal height would give a 7:1 wordmark ~10x the ink of a stacked
+   crest; these even out the optical weight instead. */
+.marquee__item img { height: 46px; width: auto; max-width: 196px; object-fit: contain; }
+.marquee__item--wide img     { height: 38px; max-width: 250px; }
+.marquee__item--squarish img { height: 54px; }
+.marquee__item--stacked img  { height: 66px; }
 
 @keyframes marquee { to { transform: translateX(-50%); } }
 

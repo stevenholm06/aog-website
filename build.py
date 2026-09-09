@@ -20,6 +20,7 @@ Run:  python3 build.py
 import glob
 import html
 import json
+import struct
 import io
 import os
 import re
@@ -74,9 +75,9 @@ FOOTER = """<footer class="ftr">
       <div>
         <h4>Contact</h4>
         <ul>
-          <li><a href="mailto:info@associateownersgroup.com">info@associateownersgroup.com</a></li>
+          <li><a href="mailto:info@aoginc.com">info@aoginc.com</a></li>
           <li><a href="tel:+18017388858">+1 801-738-8858</a></li>
-          <li>616 S. 300 E<br>St. George, Utah 84770</li>
+          <li>620 S 400 E, Suite 404<br>St. George, Utah 84770</li>
           <li style="opacity:.7">Mon&ndash;Fri, 9am&ndash;5pm MST</li>
         </ul>
       </div>
@@ -125,12 +126,12 @@ def shell(title, desc, body, canonical):
 <title>%(title)s</title>
 <meta name="description" content="%(desc)s">
 <link rel="canonical" href="https://associateownersgroup.com%(canonical)s">
+<link rel="preconnect" href="https://use.typekit.net">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Proxima Nova is the brand face (licensed via Adobe Fonts). Drop the kit
-     <link> in here and it takes over automatically — the CSS lists it first.
-     Figtree below is the free stand-in until then. -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<!-- Proxima Nova, the brand face, via the AOG Adobe Fonts web project. -->
+<link rel="stylesheet" href="https://use.typekit.net/ucl6kcm.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script>document.documentElement.classList.add('js')</script>
 <link rel="stylesheet" href="/assets/aog.css?v=%(v)s">
 %(analytics)s
@@ -164,6 +165,46 @@ def shell(title, desc, body, canonical):
 
 
 
+def _intrinsic_ratio(src):
+    """Width/height of a logo file, read from the SVG viewBox or PNG header."""
+    path = os.path.join(ROOT, src.lstrip('/'))
+    try:
+        if src.endswith('.svg'):
+            head = io.open(path, encoding='utf-8', errors='ignore').read(4000)
+            m = re.search(r'viewBox="([\d.\-\s]+)"', head)
+            if m:
+                box = [float(v) for v in m.group(1).split()]
+                if box[3]:
+                    return box[2] / box[3]
+        elif src.endswith('.png'):
+            with open(path, 'rb') as fh:
+                fh.read(16)
+                w, h = struct.unpack('>II', fh.read(8))
+            if h:
+                return w / h
+    except Exception:
+        pass
+    return 3.0
+
+
+def _size_class(src):
+    """Bucket a logo by shape so all marks carry similar optical weight.
+
+    Rendering every logo at one height sounds fair but is not: the set spans
+    0.77:1 (Logos Wealth, stacked) to 7.27:1 (DebtMedic, a long wordmark), so
+    a single height left the widest with roughly ten times the ink of the
+    narrowest. Shorter for wide marks, taller for stacked ones.
+    """
+    r = _intrinsic_ratio(src)
+    if r >= 4.0:
+        return ' marquee__item--wide'
+    if r >= 2.4:
+        return ''
+    if r >= 1.8:
+        return ' marquee__item--squarish'
+    return ' marquee__item--stacked'
+
+
 def marquee():
     """The family of companies as a continuous loop.
 
@@ -173,8 +214,8 @@ def marquee():
     """
     def run(hidden):
         return '\n        '.join(
-            '<div class="marquee__item"><img src="%s" alt="%s" loading="lazy"></div>'
-            % (src, '' if hidden else alt) for src, alt in PARTNERS)
+            '<div class="marquee__item%s"><img src="%s" alt="%s" loading="lazy"></div>'
+            % (_size_class(src), src, '' if hidden else alt) for src, alt in PARTNERS)
 
     return """      <div class="marquee r">
         <div class="marquee__track">
@@ -237,6 +278,7 @@ PARTNERS = [
     ('/assets/logos/first-asset-financial.png',       'First Asset Financial'),
     ('/assets/logos/fisher-group.png',                'Fisher Group'),
     ('/assets/logos/agency-contracting-services.png', 'Agency Contracting Services'),
+    ('/assets/logos/logos-wealth.svg',                'Logos Wealth Management'),
     ('/assets/logos/copper.svg',                      'Copper CRM'),
 ]
 
@@ -474,9 +516,9 @@ def main():
           <p class="tag"><b>&mdash;</b> Contact information</p>
           <h2>Get in touch.</h2>
           <dl class="deflist" style="margin-top:28px">
-            <div><dt>Email</dt><dd><a href="mailto:info@associateownersgroup.com">info@associateownersgroup.com</a></dd></div>
+            <div><dt>Email</dt><dd><a href="mailto:info@aoginc.com">info@aoginc.com</a></dd></div>
             <div><dt>Phone</dt><dd><a href="tel:+18017388858">+1 801-738-8858</a></dd></div>
-            <div><dt>Office</dt><dd>616 S. 300 E<br>St. George, Utah 84770</dd></div>
+            <div><dt>Office</dt><dd>620 S 400 E, Suite 404<br>St. George, Utah 84770</dd></div>
             <div><dt>Office hours</dt><dd>Monday&ndash;Friday, 9am&ndash;5pm MST<br>Saturday&ndash;Sunday, closed</dd></div>
           </dl>
         </div>
