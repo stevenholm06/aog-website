@@ -31,8 +31,11 @@
   /* Proxima Nova is the brand face. It is a licensed Adobe Fonts family, so
      it is listed first and takes over automatically once the kit is loaded;
      Figtree is the closest free stand-in until then. */
-  --display: "Proxima Nova", "Figtree", "Montserrat", ui-sans-serif, system-ui, sans-serif;
-  --body:    "Proxima Nova", "Figtree", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  /* proxima-nova is the family name Adobe Fonts serves; "Proxima Nova" is the
+     desktop font name, so designers with it installed locally see it too.
+     Both are listed, then Figtree as the free stand-in. */
+  --display: proxima-nova, "Proxima Nova", "Figtree", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --body:    proxima-nova, "Proxima Nova", "Figtree", "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
   --gutter: clamp(20px, 4vw, 56px);
