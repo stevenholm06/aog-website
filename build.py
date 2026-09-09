@@ -222,8 +222,6 @@ PARTNERS = [
     ('/assets/logos/experior.png',                    'Experior Financial Group'),
     ('/wp-content/uploads/your-ia-logo-new.png',      'Your IA'),
     ('/assets/logos/wellthplan.svg',                  'Wellthplan'),
-    ('/wp-content/uploads/aog-tech-logo.png',         'AOG Tech'),
-    ('/wp-content/uploads/aog-canada-logo.png',       'AOG Canada'),
     ('/assets/logos/aog-realty-holdings.svg',         'AOG Realty Holdings'),
     ('/assets/logos/rhino-re.svg',                    'Rhino RE'),
     ('/assets/logos/canyon-insurance.png',            'Canyon Insurance'),
