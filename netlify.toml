@@ -13,3 +13,49 @@
   to = "/events/"
   status = 301
   force = true
+
+# ---------------------------------------------------------------------------
+# Caching.
+#
+# Netlify's default for static files is `max-age=0, must-revalidate`: correct,
+# but it costs a conditional request per asset per visit. These files are
+# safe to hold longer.
+
+# The stylesheet URL carries a digest of its own contents (?v=...), so a
+# changed file is a changed URL and can never be served stale.
+[[headers]]
+  for = "/assets/aog.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Logos and icons are not version-stamped, so this is a deliberate trade: a
+# day of staleness for a returning visitor after a logo is swapped, in
+# exchange for no revalidation on the other 364. Raise it only if the roster
+# starts carrying digests too.
+[[headers]]
+  for = "/assets/logos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+# The films are large and change rarely. A week, for the same reason.
+[[headers]]
+  for = "/assets/video/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=2592000"
+
+# HTML is deliberately left on the default. Pages must update the moment a
+# deploy lands.
+
+# ---------------------------------------------------------------------------
+# Security headers.
+#
+# No Content-Security-Policy: the pages load Adobe Fonts, Google Fonts, gtag
+# and the live Copper form embed, and a policy written blind would break the
+# forms. Worth adding once those origins are enumerated against the real site.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), interest-cohort=()"

@@ -52,8 +52,13 @@ viewBox or PNG header and sizes wide wordmarks shorter than stacked crests, so
 a 7:1 mark and a 1:1 mark carry similar optical weight. Add a logo and it sorts
 itself out.
 
-The home page marquee is injected between `<!-- LOGOS:START -->` and
-`<!-- LOGOS:END -->` markers by the same list.
+The home page marquee is rewritten between the `<!-- LOGOS:START -->` and
+`<!-- LOGOS:END -->` markers on every build. Everything outside those markers
+is hand-maintained.
+
+Logos should be sized for how they are displayed. One arrived as a 583x756
+bitmap wrapped in an SVG, 191KB to draw a 51x66 mark; exported at 2x it is
+18KB and looks identical.
 
 ### Local preview
 
@@ -84,6 +89,20 @@ a deploy would otherwise leave visitors on the previous design.
   site but the crawl never captured it. It 404s.
 - **`/annual-meeting/` is gone**, 301'd to `/events/` in `netlify.toml`, since
   the April 2026 meeting has passed.
+
+## Caching
+
+`netlify.toml` sets `Cache-Control` for assets. The stylesheet is immutable
+for a year because its URL carries a digest of its contents. Logos get a day
+and video a week, both with `stale-while-revalidate` - they are not
+version-stamped, so that window is how long a returning visitor can see an
+old logo after it is swapped.
+
+HTML is deliberately left on Netlify's default so deploys land immediately.
+
+There is no Content-Security-Policy. The pages load Adobe Fonts, Google
+Fonts, gtag and the Copper form embed, and a policy written without checking
+those origins against the live site would break the forms.
 
 ## If the domain changes
 

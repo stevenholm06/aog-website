@@ -300,6 +300,29 @@ def marquee():
                    '<div aria-hidden="true" style="display:contents">' + run(True) + '</div>')
 
 
+def sync_home():
+    """Rewrite the home page marquee from PARTNERS.
+
+    The markers were added so the home page and /partners/ could not disagree,
+    but nothing was actually replacing them: the roster was edited in build.py
+    and the home page kept its old copy until someone noticed. This closes it.
+    Everything outside the markers stays hand-maintained.
+    """
+    path = os.path.join(ROOT, 'index.html')
+    with io.open(path, encoding='utf-8') as fh:
+        page = fh.read()
+    pat = re.compile(r'(<!-- LOGOS:START[^>]*-->\n).*?(\n\s*<!-- LOGOS:END -->)',
+                     re.S)
+    if not pat.search(page):
+        raise SystemExit('Cannot sync: the LOGOS markers are missing from index.html')
+    new = pat.sub(lambda m: m.group(1) + marquee() + m.group(2), page, count=1)
+    if new != page:
+        with io.open(path, 'w', encoding='utf-8') as fh:
+            fh.write(new)
+        return True
+    return False
+
+
 def phead(tag, num, h1, lede=''):
     return """  <section class="phead">
     <img class="phead__mark" src="/assets/rhino-white.svg" alt="" aria-hidden="true">
@@ -356,7 +379,7 @@ PARTNERS = [
     ('/assets/logos/first-asset-financial.svg',       'First Asset Financial — Member SIPC | FINRA'),
     ('/assets/logos/fisher-group.png',                'Fisher Group'),
     ('/assets/logos/agency-contracting-services.png', 'Agency Contracting Services'),
-    ('/assets/logos/logos-wealth.svg',                'Logos Wealth Management'),
+    ('/assets/logos/logos-wealth.png',                'Logos Wealth Management'),
     ('/assets/logos/copper.svg',                      'Copper CRM'),
 ]
 
@@ -679,6 +702,9 @@ def main():
     written.append(write('author/mgutierrez/index.html',
                         shell('M. Gutierrez — Associate Owners Group',
                               'Press releases from Associate Owners Group.', body, '/author/mgutierrez/')))
+
+    if sync_home():
+        print('   home page marquee resynced from PARTNERS')
 
     print('%d pages written (%d press releases + %d others)'
           % (len(written), len(releases), len(written) - len(releases)))
