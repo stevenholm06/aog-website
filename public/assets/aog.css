@@ -115,7 +115,12 @@ p:last-child { margin-bottom: 0; }
 .hdr { position: fixed; inset: 0 0 auto; z-index: 90; height: var(--hdr); display: flex; align-items: center;
        transition: background-color .25s, border-color .25s; border-bottom: 1px solid transparent; }
 .hdr.stuck { background: rgba(43,52,57,.95); backdrop-filter: blur(8px); border-bottom-color: var(--rule-dark); }
-.hdr .wrap { display: flex; align-items: center; gap: 26px; }
+/* The header is the one band that runs edge to edge. Constrained to --maxw
+   it read as a strip floating in the middle of a wide monitor, with ~350px of
+   dead air either side at 1920px; anchored to the viewport it reads as chrome.
+   Below about 1430px this changes nothing at all -- --maxw is wider than the
+   viewport there, so the nav collapse breakpoint is unaffected. */
+.hdr .wrap { max-width: none; display: flex; align-items: center; gap: 26px; }
 .hdr__logo { flex: none; }
 .hdr__logo img { width: 240px; height: 57px; object-fit: contain; object-position: left center; }
 .nav { margin-left: auto; display: flex; align-items: center; gap: 32px; }

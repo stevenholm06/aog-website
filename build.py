@@ -316,6 +316,16 @@ def sync_home():
     if not pat.search(page):
         raise SystemExit('Cannot sync: the LOGOS markers are missing from index.html')
     new = pat.sub(lambda m: m.group(1) + marquee() + m.group(2), page, count=1)
+
+    # Restamp the stylesheet the same way the generated pages are stamped.
+    # Without this the home page keeps whatever digest was pasted in last and
+    # asks for a URL that no longer matches the file -- and since that URL is
+    # served `immutable`, a returning visitor would hold the old design for a
+    # year. The generated pages restamped themselves and the home page did not.
+    new, n = re.subn(r'(aog\.css\?v=)[a-f0-9]+', r'\g<1>' + ASSET_V, new)
+    if not n:
+        raise SystemExit('Cannot sync: no versioned aog.css link in index.html')
+
     if new != page:
         with io.open(path, 'w', encoding='utf-8') as fh:
             fh.write(new)

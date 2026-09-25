@@ -52,6 +52,10 @@ viewBox or PNG header and sizes wide wordmarks shorter than stacked crests, so
 a 7:1 mark and a 1:1 mark carry similar optical weight. Add a logo and it sorts
 itself out.
 
+The home page's stylesheet link is restamped on every build too, for the
+same reason: it is the one page written by hand, and it had quietly fallen a
+version behind while every generated page moved on.
+
 The home page marquee is rewritten between the `<!-- LOGOS:START -->` and
 `<!-- LOGOS:END -->` markers on every build. Everything outside those markers
 is hand-maintained.
