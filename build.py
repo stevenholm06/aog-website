@@ -65,8 +65,11 @@ ANALYTICS = """<!-- Google tag (gtag.js) — restored from the original WordPres
 </script>"""
 
 
+# Two groups. NAV is what the site contains and sits beside the logo; NAV_END
+# is what a visitor does and sits at the right edge with the CTA.
 NAV = [('/', 'Home'), ('/our-team/', 'Leadership'), ('/partners/', 'Partners'),
-       ('/press/', 'Press'), ('/events/', 'Events'), ('/contact/', 'Contact')]
+       ('/press/', 'Press'), ('/events/', 'Events')]
+NAV_END = [('/contact/', 'Contact')]
 
 FOOTER = """<footer class="ftr">
   <div class="wrap">
@@ -167,8 +170,10 @@ ORG_JSONLD = """<script type="application/ld+json">
 
 
 def shell(title, desc, body, canonical, og_type='website'):
-    nav = '\n      '.join(
+    nav = '\n        '.join(
         '<a href="%s">%s</a>' % (href, label) for href, label in NAV)
+    nav_end = '\n        '.join(
+        '<a href="%s">%s</a>' % (href, label) for href, label in NAV_END)
     return """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -218,8 +223,13 @@ def shell(title, desc, body, canonical, og_type='website'):
     </a>
     <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="nav"><i></i><i></i><i></i></button>
     <nav class="nav" id="nav">
-      %(nav)s
-      <a class="btn btn--y" href="/join/">Become a Partner</a>
+      <div class="nav__main">
+        %(nav)s
+      </div>
+      <div class="nav__end">
+        %(nav_end)s
+        <a class="btn btn--y" href="/join/">Become a Partner</a>
+      </div>
     </nav>
   </div>
 </header>
@@ -234,6 +244,7 @@ def shell(title, desc, body, canonical, og_type='website'):
 </body>
 </html>
 """ % dict(title=title, desc=desc, canonical=canonical, nav=nav,
+           nav_end=nav_end,
            body=body, footer=FOOTER, script=SCRIPT, v=ASSET_V,
            analytics=ANALYTICS, site=SITE, ogtype=og_type,
            orgjsonld=ORG_JSONLD)

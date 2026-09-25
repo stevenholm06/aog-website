@@ -123,7 +123,13 @@ p:last-child { margin-bottom: 0; }
 .hdr .wrap { max-width: none; display: flex; align-items: center; gap: 26px; }
 .hdr__logo { flex: none; }
 .hdr__logo img { width: 240px; height: 57px; object-fit: contain; object-position: left center; }
-.nav { margin-left: auto; display: flex; align-items: center; gap: 32px; }
+/* Two groups, not one. The section links belong with the logo -- they say
+   what the site contains -- while the utility links belong at the far edge.
+   .nav spans the gap so .nav__end can claim the right edge with auto margin;
+   without flex:1 the whole nav still collects on the right. */
+.nav { flex: 1; display: flex; align-items: center; gap: 32px; }
+.nav__main { display: flex; align-items: center; gap: 32px; }
+.nav__end  { margin-left: auto; display: flex; align-items: center; gap: 26px; }
 .nav a { font: 500 16px/1 var(--body); color: rgba(255,255,255,.88); }
 /* .nav a is more specific than .btn--y, so without this the header CTA
    inherits the nav's white text and lands at 1.8:1 on the gold. */
@@ -324,6 +330,8 @@ p:last-child { margin-bottom: 0; }
   .nav.open { display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
               position: fixed; inset: var(--hdr) 0 auto; background: var(--gun);
               padding: 24px var(--gutter) 30px; border-bottom: 1px solid var(--rule-dark); }
+  .nav.open .nav__main, .nav.open .nav__end {
+              flex-direction: column; align-items: flex-start; gap: 20px; margin-left: 0; }
   .team { grid-template-columns: repeat(2,1fr); }
   .logos { grid-template-columns: repeat(3,1fr); }
   .news { grid-template-columns: repeat(2,1fr); }
