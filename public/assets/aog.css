@@ -316,15 +316,23 @@ p:last-child { margin-bottom: 0; }
 }
 .skip:focus { top: 16px; }
 
+/* --- Anchor targets ------------------------------------------------------- */
+/* The header is fixed, so an anchor jump puts the section's top edge at y=0 --
+   behind the bar. Measured before this rule: five of the six nav links landed
+   with their numbered label ("01 The Thesis") covered. Reserve the header's
+   height, plus a little air so the label is not flush against it. */
+section[id] { scroll-margin-top: calc(var(--hdr) + 14px); }
+
 /* --- Reveal (gated on .js so content is never hidden without it) ---------- */
 .js .r { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
 .js .r.on { opacity: 1; transform: none; }
 
 /* --- Responsive ----------------------------------------------------------- */
-/* The nav needs ~731px at 16px type and the logo another 240px, so with the
-   gutters the header stops fitting around 1110px. Collapse point raised from
-   1060px when the header type grew. */
-@media (max-width: 1180px) {
+/* The header needs 1133px of content plus a 4vw gutter each side, so it stops
+   fitting at about 1232px. Raised from 1180px when Family Companies became a
+   sixth item; dropping the articles from the labels paid for most of it, or
+   this would have had to go to 1282px and put a burger on ordinary laptops. */
+@media (max-width: 1240px) {
   .nav { display: none; }
   .burger { display: block; }
   .nav.open { display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
